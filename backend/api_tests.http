@@ -1,12 +1,29 @@
-### Health check
+### ============================================================
+### MEDLEDGER API TESTS
+### Base URL: http://127.0.0.1:5000
+### ============================================================
+
+
+### ============================================================
+### 1. HEALTH CHECK
+### ============================================================
+
+### Check API + database connection
 GET http://127.0.0.1:5000/api/health
 
+
+### ============================================================
+### 2. EQUIPMENT
+### ============================================================
 
 ### Get all equipment
 GET http://127.0.0.1:5000/api/equipment
 
 
+### ------------------------------------------------------------
 ### Create equipment
+### ------------------------------------------------------------
+
 POST http://127.0.0.1:5000/api/equipment
 Content-Type: application/json
 
@@ -21,15 +38,209 @@ Content-Type: application/json
 }
 
 
+### ------------------------------------------------------------
+### Create another equipment
+### ------------------------------------------------------------
+
+POST http://127.0.0.1:5000/api/equipment
+Content-Type: application/json
+
+{
+  "code": "EQ-00002",
+  "name": "Ventilator",
+  "manufacturer": "Drager",
+  "model": "Evita V600",
+  "serial_number": "SN-MED-00002",
+  "hospital": "City General Hospital",
+  "department": "ICU"
+}
+
+
+### ------------------------------------------------------------
 ### Get equipment by ID
+### Change ID if necessary
+### ------------------------------------------------------------
+
 GET http://127.0.0.1:5000/api/equipment/1
 
 
+### ------------------------------------------------------------
 ### Update equipment
+### ------------------------------------------------------------
+
 PUT http://127.0.0.1:5000/api/equipment/1
 Content-Type: application/json
 
 {
-  "name": "Patient Monitor Updated",
+  "name": "Patient Monitor Pro",
   "department": "Emergency"
+}
+
+
+### ------------------------------------------------------------
+### Get equipment again to verify update
+### ------------------------------------------------------------
+
+GET http://127.0.0.1:5000/api/equipment/1
+
+
+### ------------------------------------------------------------
+### Test equipment not found
+### ------------------------------------------------------------
+
+GET http://127.0.0.1:5000/api/equipment/99999
+
+
+### ------------------------------------------------------------
+### Test duplicate equipment code
+### Should return 409
+### ------------------------------------------------------------
+
+POST http://127.0.0.1:5000/api/equipment
+Content-Type: application/json
+
+{
+  "code": "EQ-00001",
+  "name": "Duplicate Monitor",
+  "manufacturer": "Test",
+  "model": "TEST",
+  "serial_number": "SN-DUPLICATE-001",
+  "hospital": "City General Hospital",
+  "department": "ICU"
+}
+
+
+### ------------------------------------------------------------
+### Test duplicate serial number
+### Should return 409
+### ------------------------------------------------------------
+
+POST http://127.0.0.1:5000/api/equipment
+Content-Type: application/json
+
+{
+  "code": "EQ-UNIQUE-999",
+  "name": "Duplicate Serial Test",
+  "manufacturer": "Test",
+  "model": "TEST",
+  "serial_number": "SN-MED-00001",
+  "hospital": "City General Hospital",
+  "department": "ICU"
+}
+
+
+### ------------------------------------------------------------
+### Test missing required field
+### Should return 400
+### ------------------------------------------------------------
+
+POST http://127.0.0.1:5000/api/equipment
+Content-Type: application/json
+
+{
+  "name": "Incomplete Equipment"
+}
+
+
+### ============================================================
+### 3. LABORATORIES
+### ============================================================
+
+### Get all laboratories
+GET http://127.0.0.1:5000/api/laboratories
+
+
+### ------------------------------------------------------------
+### Create laboratory
+### ------------------------------------------------------------
+
+POST http://127.0.0.1:5000/api/laboratories
+Content-Type: application/json
+
+{
+  "name": "MedLab Diagnostics",
+  "accreditation_number": "LAB-ACC-0001",
+  "accreditation_status": "VALID",
+  "is_recognized": true
+}
+
+
+### ------------------------------------------------------------
+### Create another laboratory
+### ------------------------------------------------------------
+
+POST http://127.0.0.1:5000/api/laboratories
+Content-Type: application/json
+
+{
+  "name": "National Calibration Laboratory",
+  "accreditation_number": "LAB-ACC-0002",
+  "accreditation_status": "VALID",
+  "is_recognized": true
+}
+
+
+### ------------------------------------------------------------
+### Get laboratory by ID
+### Change ID if necessary
+### ------------------------------------------------------------
+
+GET http://127.0.0.1:5000/api/laboratories/1
+
+
+### ------------------------------------------------------------
+### Update laboratory
+### ------------------------------------------------------------
+
+PUT http://127.0.0.1:5000/api/laboratories/1
+Content-Type: application/json
+
+{
+  "accreditation_status": "RENEWED",
+  "is_recognized": true
+}
+
+
+### ------------------------------------------------------------
+### Get laboratory again to verify update
+### ------------------------------------------------------------
+
+GET http://127.0.0.1:5000/api/laboratories/1
+
+
+### ------------------------------------------------------------
+### Test laboratory not found
+### ------------------------------------------------------------
+
+GET http://127.0.0.1:5000/api/laboratories/99999
+
+
+### ------------------------------------------------------------
+### Test duplicate accreditation number
+### Should return 409
+### ------------------------------------------------------------
+
+POST http://127.0.0.1:5000/api/laboratories
+Content-Type: application/json
+
+{
+  "name": "Duplicate Laboratory",
+  "accreditation_number": "LAB-ACC-0001",
+  "accreditation_status": "VALID",
+  "is_recognized": true
+}
+
+
+### ------------------------------------------------------------
+### Test missing laboratory name
+### Should return 400
+### ------------------------------------------------------------
+
+POST http://127.0.0.1:5000/api/laboratories
+Content-Type: application/json
+
+{
+  "accreditation_number": "LAB-ACC-9999",
+  "accreditation_status": "VALID",
+  "is_recognized": true
 }
