@@ -1,0 +1,488 @@
+/* =====================================================
+   MEDLEDGER LOGIN PAGE
+   ===================================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+.login-page {
+  min-height: 100vh;
+  width: 100%;
+  background: #f7f5f1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #35242a;
+  padding: 30px 20px;
+}
+
+/* =====================================================
+   BACKGROUND
+   ===================================================== */
+
+.login-page::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: #6f927e;
+  z-index: 1;
+}
+
+.login-bg-circle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.login-bg-circle-left {
+  width: 480px;
+  height: 480px;
+  left: -280px;
+  top: -100px;
+  background: rgba(121, 151, 133, 0.12);
+}
+
+.login-bg-circle-right {
+  width: 500px;
+  height: 500px;
+  right: -260px;
+  bottom: -220px;
+  background: rgba(202, 188, 139, 0.12);
+}
+
+/* =====================================================
+   LOGIN CARD
+   ===================================================== */
+
+.login-card {
+  width: 100%;
+  max-width: 560px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid #dedad5;
+  border-radius: 22px;
+  padding: 32px 46px 28px;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 22px 55px rgba(65, 43, 48, 0.10);
+
+  animation: cardAppear 0.7s ease forwards;
+}
+
+.login-card::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: #7a9b88;
+  border-radius: 22px 22px 0 0;
+}
+
+/* =====================================================
+   LOGO
+   ===================================================== */
+
+.login-logo {
+  height: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 5px;
+  overflow: hidden;
+}
+
+.login-logo img {
+  width: 135px;
+  max-height: 55px;
+  object-fit: contain;
+  opacity: 0.9;
+}
+
+/* =====================================================
+   HEADER
+   ===================================================== */
+
+.secure-access {
+  text-align: center;
+  color: #6f927e;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  margin-top: 2px;
+  margin-bottom: 8px;
+}
+
+.login-card h1 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 35px;
+  font-weight: 500;
+  text-align: center;
+  margin: 0;
+  color: #321f25;
+}
+
+.login-subtitle {
+  text-align: center;
+  color: #756c70;
+  font-size: 16px;
+  margin: 8px 0 30px;
+}
+
+/* =====================================================
+   INPUTS
+   ===================================================== */
+
+.input-group {
+  margin-bottom: 24px;
+}
+
+.input-group label {
+  display: block;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: #38252b;
+  margin-bottom: 12px;
+}
+
+.input-group input {
+  width: 100%;
+  height: 58px;
+  border: 1px solid #ddd8d4;
+  border-radius: 15px;
+  background: #fff;
+  padding: 0 17px;
+  font-size: 15px;
+  color: #35242a;
+  outline: none;
+  transition: 0.25s ease;
+}
+
+.input-group input::placeholder {
+  color: #a69ca0;
+}
+
+.input-group input:focus {
+  border-color: #799a87;
+  box-shadow: 0 0 0 4px rgba(121, 154, 135, 0.10);
+}
+
+/* =====================================================
+   PASSWORD
+   ===================================================== */
+
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper input {
+  padding-right: 55px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 17px;
+  color: #799a87;
+}
+
+/* =====================================================
+   REMEMBER
+   ===================================================== */
+
+.remember-row {
+  margin: -3px 0 25px;
+}
+
+.remember-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #665c61;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.remember-label input {
+  width: 17px;
+  height: 17px;
+  accent-color: #493039;
+}
+
+/* =====================================================
+   WORKSPACE
+   ===================================================== */
+
+.workspace-section {
+  margin-bottom: 24px;
+}
+
+.workspace-title {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #4d3b41;
+  margin-bottom: 14px;
+}
+
+.workspace-options {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.workspace-card {
+  width: 100%;
+  min-height: 68px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #fff;
+  border: 1px solid #ded9d5;
+  border-radius: 13px;
+  padding: 9px 12px;
+  cursor: pointer;
+  text-align: left;
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
+}
+
+.workspace-card:hover {
+  transform: translateY(-2px);
+  border-color: #92aa9b;
+  box-shadow: 0 7px 18px rgba(70, 48, 55, 0.08);
+}
+
+.workspace-card.selected {
+  background: #f3f7f4;
+  border-color: #719481;
+  box-shadow: 0 6px 18px rgba(90, 120, 103, 0.12);
+  transform: scale(1.015);
+}
+
+/* Icon */
+
+.workspace-icon {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 11px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 21px;
+  background: #f5ebbd;
+}
+
+/* Information */
+
+.workspace-info {
+  flex: 1;
+}
+
+.workspace-info h3 {
+  margin: 0 0 3px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #322229;
+}
+
+.workspace-info p {
+  margin: 0;
+  color: #7a7075;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* Arrow */
+
+.workspace-arrow {
+  width: 30px;
+  text-align: center;
+  color: #789985;
+  font-size: 19px;
+  font-weight: bold;
+  transition: 0.25s ease;
+}
+
+.workspace-card:hover .workspace-arrow {
+  transform: translateX(4px);
+}
+
+.workspace-card.selected .workspace-arrow {
+  color: #557b66;
+}
+
+/* =====================================================
+   SIGN IN BUTTON
+   ===================================================== */
+
+.signin-button {
+  width: 100%;
+  height: 57px;
+  border: none;
+  border-radius: 13px;
+  background: #452d36;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.25s ease;
+  box-shadow: 0 9px 20px rgba(69, 45, 54, 0.13);
+}
+
+.signin-button:hover {
+  background: #38232b;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(69, 45, 54, 0.18);
+}
+
+.signin-button:not(.active) {
+  opacity: 0.65;
+}
+
+.signin-button span:last-child {
+  font-size: 18px;
+}
+
+/* =====================================================
+   FORGOT PASSWORD
+   ===================================================== */
+
+.forgot-password {
+  display: block;
+  margin: 20px auto 0;
+  background: none;
+  border: none;
+  color: #654650;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.forgot-password:hover {
+  color: #789985;
+  text-decoration: underline;
+}
+
+/* =====================================================
+   SECURITY
+   ===================================================== */
+
+.security-section {
+  margin-top: 22px;
+}
+
+.security-line {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.security-line span {
+  height: 1px;
+  background: #ddd7d4;
+  flex: 1;
+}
+
+.security-line p {
+  margin: 0;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: #988c91;
+  white-space: nowrap;
+}
+
+.security-message {
+  text-align: center;
+  margin-top: 12px;
+  font-size: 12px;
+  color: #91868b;
+}
+
+/* =====================================================
+   FOOTER
+   ===================================================== */
+
+.login-footer {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  color: #8b8185;
+  font-size: 12px;
+  z-index: 2;
+}
+
+.login-footer span {
+  color: #6f927e;
+}
+
+/* =====================================================
+   ANIMATION
+   ===================================================== */
+
+@keyframes cardAppear {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 650px) {
+  .login-page {
+    padding: 20px 14px 60px;
+  }
+
+  .login-card {
+    padding: 28px 24px 25px;
+    border-radius: 18px;
+  }
+
+  .login-card h1 {
+    font-size: 30px;
+  }
+
+  .login-subtitle {
+    font-size: 14px;
+  }
+
+  .workspace-info p {
+    font-size: 11px;
+  }
+
+  .login-footer {
+    bottom: 8px;
+  }
+}
