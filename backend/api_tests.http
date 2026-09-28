@@ -1,0 +1,35 @@
+### Health check
+GET http://127.0.0.1:5000/api/health
+
+
+### Get all equipment
+GET http://127.0.0.1:5000/api/equipment
+
+
+### Create equipment
+POST http://127.0.0.1:5000/api/equipment
+Content-Type: application/json
+
+{
+  "code": "EQ-00001",
+  "name": "Patient Monitor",
+  "manufacturer": "Philips",
+  "model": "MX450",
+  "serial_number": "SN-MED-00001",
+  "hospital": "City General Hospital",
+  "department": "ICU"
+}
+
+
+### Get equipment by ID
+GET http://127.0.0.1:5000/api/equipment/1
+
+
+### Update equipment
+PUT http://127.0.0.1:5000/api/equipment/1
+Content-Type: application/json
+
+{
+  "name": "Patient Monitor Updated",
+  "department": "Emergency"
+}
