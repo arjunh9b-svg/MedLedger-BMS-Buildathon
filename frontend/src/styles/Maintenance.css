@@ -1,0 +1,409 @@
+.maintenance-page {
+  min-height: calc(100vh - 72px);
+
+  background: #f8f5f2;
+  color: #29191f;
+
+  padding: 48px 42px 70px;
+
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* HEADER */
+
+.maintenance-header {
+  max-width: 1450px;
+  margin: 0 auto 40px;
+}
+
+.maintenance-eyebrow {
+  margin: 0 0 10px;
+
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+
+  color: #8a777d;
+}
+
+.maintenance-header h1 {
+  margin: 0;
+
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 46px;
+  line-height: 1.08;
+  font-weight: 400;
+
+  letter-spacing: -1.5px;
+
+  color: #29191f;
+}
+
+.maintenance-header p:last-child {
+  margin: 13px 0 0;
+
+  font-size: 14px;
+  color: #75696d;
+}
+
+/* SECTIONS */
+
+.maintenance-sections {
+  max-width: 1450px;
+  margin: 0 auto;
+}
+
+.maintenance-section {
+  margin-bottom: 36px;
+}
+
+.maintenance-section:last-child {
+  margin-bottom: 0;
+}
+
+/* SECTION HEADER */
+
+.maintenance-section-header {
+  margin-bottom: 13px;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.section-label {
+  margin: 0 0 6px;
+
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.maintenance-section-header h2 {
+  margin: 0;
+
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 25px;
+  font-weight: 400;
+
+  color: #29191f;
+}
+
+.overdue-label {
+  color: #a05b5b;
+}
+
+.due-label {
+  color: #a07b42;
+}
+
+.verified-label {
+  color: #63806d;
+}
+
+/* COUNT */
+
+.section-count {
+  min-width: 27px;
+  height: 27px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.overdue-count {
+  background: #f3dfdf;
+  color: #9a4d4d;
+}
+
+.due-count {
+  background: #f4ead7;
+  color: #92713b;
+}
+
+.verified-count {
+  background: #e4eee7;
+  color: #52735e;
+}
+
+/* LIST */
+
+.maintenance-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* CARD */
+
+.maintenance-card {
+  padding: 21px 24px;
+
+  background: #ffffff;
+
+  border: 1px solid #e4dedb;
+  border-radius: 10px;
+
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.maintenance-card:hover {
+  border-color: #cfc4c1;
+
+  box-shadow: 0 5px 16px rgba(41, 25, 31, 0.055);
+}
+
+/* CARD TOP */
+
+.maintenance-card-main {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 25px;
+}
+
+.maintenance-title-row {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+}
+
+.maintenance-title-row h2 {
+  margin: 0;
+
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 20px;
+  font-weight: 400;
+
+  color: #29191f;
+}
+
+.maintenance-id {
+  padding: 4px 7px;
+
+  border-radius: 5px;
+
+  background: #f5f1ee;
+
+  font-family: "Courier New", monospace;
+  font-size: 9px;
+  font-weight: 700;
+
+  color: #75696d;
+}
+
+.maintenance-model {
+  margin: 7px 0 0;
+
+  font-size: 12px;
+  color: #75696d;
+}
+
+.maintenance-serial {
+  margin: 7px 0 0;
+
+  font-family: "Courier New", monospace;
+  font-size: 10px;
+
+  color: #9a8d91;
+}
+
+/* STATUS */
+
+.maintenance-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  flex-shrink: 0;
+
+  padding: 8px 11px;
+
+  border-radius: 16px;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.maintenance-status.overdue {
+  background: #f7eaea;
+  color: #9a4d4d;
+}
+
+.maintenance-status.due-soon {
+  background: #f7f0e4;
+  color: #92713b;
+}
+
+.maintenance-status.verified {
+  background: #edf5ef;
+  color: #52735e;
+}
+
+/* CARD BOTTOM */
+
+.maintenance-card-bottom {
+  margin-top: 19px;
+  padding-top: 15px;
+
+  display: grid;
+  grid-template-columns: 190px 190px 1fr;
+
+  gap: 20px;
+
+  border-top: 1px solid #eee9e6;
+}
+
+.maintenance-date,
+.maintenance-hospital {
+  display: flex;
+  flex-direction: column;
+
+  gap: 5px;
+}
+
+.maintenance-date span,
+.maintenance-hospital span {
+  font-size: 9px;
+  font-weight: 700;
+
+  letter-spacing: 0.9px;
+  text-transform: uppercase;
+
+  color: #a09498;
+}
+
+.maintenance-date strong,
+.maintenance-hospital strong {
+  font-size: 11px;
+  font-weight: 600;
+
+  color: #3b252d;
+}
+
+/* STATES */
+
+.maintenance-loading {
+  max-width: 1450px;
+  margin: 50px auto;
+
+  font-size: 13px;
+  color: #75696d;
+}
+
+.maintenance-error {
+  max-width: 1450px;
+  margin: 0 auto 20px;
+
+  padding: 14px 16px;
+
+  border: 1px solid #e5caca;
+  border-radius: 8px;
+
+  background: #f8e9e9;
+  color: #8b3030;
+
+  font-size: 13px;
+}
+
+.maintenance-empty {
+  max-width: 1450px;
+  min-height: 300px;
+
+  margin: 0 auto;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  background: #ffffff;
+
+  border: 1px solid #e4dedb;
+  border-radius: 12px;
+}
+
+.maintenance-empty h2 {
+  margin: 0;
+
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 25px;
+  font-weight: 400;
+}
+
+.maintenance-empty p {
+  margin: 9px 0 0;
+
+  font-size: 13px;
+  color: #75696d;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 1000px) {
+  .maintenance-page {
+    padding: 40px 28px 60px;
+  }
+
+  .maintenance-card-bottom {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .maintenance-hospital {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 650px) {
+  .maintenance-page {
+    padding: 30px 16px 45px;
+  }
+
+  .maintenance-header {
+    margin-bottom: 30px;
+  }
+
+  .maintenance-header h1 {
+    font-size: 36px;
+  }
+
+  .maintenance-card {
+    padding: 18px;
+  }
+
+  .maintenance-card-main {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .maintenance-status {
+    align-self: flex-start;
+  }
+
+  .maintenance-title-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .maintenance-card-bottom {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .maintenance-hospital {
+    grid-column: auto;
+  }
+}

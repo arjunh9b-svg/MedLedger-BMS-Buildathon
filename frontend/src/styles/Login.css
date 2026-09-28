@@ -1,0 +1,570 @@
+* {
+  box-sizing: border-box;
+}
+
+.login-page {
+  width: 100%;
+  min-height: 100vh;
+
+  display: grid;
+  grid-template-columns: 52% 48%;
+
+  background: #faf9f7;
+  color: #2e2024;
+
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* =========================================
+   LEFT PANEL
+========================================= */
+
+.login-left {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+
+  background: #36252c;
+  color: #ffffff;
+}
+
+.login-left-content {
+  position: relative;
+  z-index: 2;
+
+  width: 100%;
+  height: 100vh;
+  min-height: 100vh;
+
+  padding: 58px 60px;
+}
+
+/* =========================================
+   LOGO
+========================================= */
+
+.login-logo {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  color: #ffffff;
+
+  font-size: 20px;
+  font-weight: 700;
+
+  letter-spacing: -0.3px;
+}
+
+.login-logo-box {
+  width: 43px;
+  height: 43px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 2px solid #eee0aa;
+  border-radius: 11px;
+
+  color: #eee0aa;
+
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 21px;
+  font-weight: bold;
+}
+
+/* =========================================
+   HERO
+========================================= */
+
+.login-hero {
+  position: absolute;
+
+  left: 60px;
+  top: 225px;
+
+  width: calc(100% - 120px);
+  max-width: 570px;
+
+  margin: 0;
+}
+
+.login-eyebrow {
+  margin: 0 0 25px;
+
+  color: #dce3e5;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  letter-spacing: 2px;
+}
+
+.login-hero h1 {
+  margin: 0;
+
+  color: #ffffff;
+
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: clamp(58px, 5.2vw, 76px);
+
+  line-height: 0.91;
+
+  font-weight: 400;
+
+  letter-spacing: -3.5px;
+}
+
+.login-description {
+  max-width: 510px;
+
+  margin: 36px 0 0;
+
+  color: #e7e0e2;
+
+  font-size: 18px;
+
+  line-height: 1.55;
+}
+
+/* =========================================
+   FOOTER
+========================================= */
+
+.login-footer {
+  position: absolute;
+
+  left: 60px;
+  bottom: 50px;
+
+  color: #c4b9bd;
+
+  font-size: 12px;
+}
+
+/* =========================================
+   DECORATIVE CURVE
+========================================= */
+
+.login-curve {
+  position: absolute;
+
+  width: 650px;
+  height: 650px;
+
+  right: -250px;
+  bottom: -410px;
+
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.075);
+}
+
+/* =========================================
+   RIGHT PANEL
+========================================= */
+
+.login-right {
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 55px 65px;
+
+  background: #faf9f7;
+}
+
+.login-form-container {
+  width: 100%;
+  max-width: 500px;
+}
+
+/* =========================================
+   HEADING
+========================================= */
+
+.form-heading {
+  margin-bottom: 44px;
+}
+
+.form-heading h2 {
+  margin: 0;
+
+  color: #281d20;
+
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 52px;
+
+  line-height: 1;
+
+  font-weight: 400;
+
+  letter-spacing: -2px;
+}
+
+.form-heading p {
+  margin: 20px 0 0;
+
+  color: #746c6f;
+
+  font-size: 17px;
+
+  line-height: 1.5;
+}
+
+/* =========================================
+   FORM
+========================================= */
+
+.form-group {
+  margin-bottom: 27px;
+}
+
+.form-group label {
+  display: block;
+
+  margin-bottom: 10px;
+
+  color: #302629;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.form-group input {
+  width: 100%;
+  height: 65px;
+
+  padding: 0 19px;
+
+  border: 1px solid #d8d4d2;
+  border-radius: 14px;
+
+  outline: none;
+
+  background: #ffffff;
+  color: #2e2024;
+
+  font-family: inherit;
+  font-size: 16px;
+
+  transition:
+    border 0.2s,
+    box-shadow 0.2s;
+}
+
+.form-group input::placeholder {
+  color: #999194;
+}
+
+.form-group input:focus {
+  border-color: #725b63;
+
+  box-shadow: 0 0 0 3px rgba(54, 37, 44, 0.08);
+}
+
+/* =========================================
+   PASSWORD
+========================================= */
+
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper input {
+  padding-right: 75px;
+}
+
+.show-password {
+  position: absolute;
+
+  right: 18px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  border: none;
+  background: transparent;
+
+  padding: 0;
+
+  color: #62575b;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.show-password:hover {
+  color: #36252c;
+}
+
+/* =========================================
+   FORGOT PASSWORD
+========================================= */
+
+.forgot-row {
+  display: flex;
+  justify-content: flex-end;
+
+  margin-top: -3px;
+  margin-bottom: 28px;
+}
+
+.forgot-btn {
+  border: none;
+  background: transparent;
+
+  padding: 0;
+
+  color: #5e5156;
+
+  font-family: inherit;
+  font-size: 13px;
+
+  cursor: pointer;
+}
+
+.forgot-btn:hover {
+  text-decoration: underline;
+}
+
+/* =========================================
+   SIGN IN
+========================================= */
+
+.signin-btn {
+  width: 100%;
+  height: 65px;
+
+  border: none;
+  border-radius: 14px;
+
+  background: #36252c;
+  color: #ffffff;
+
+  font-family: inherit;
+
+  font-size: 17px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+
+.signin-btn:hover {
+  background: #281b20;
+
+  transform: translateY(-1px);
+}
+
+/* =========================================
+   SOCIAL DIVIDER
+========================================= */
+
+.continue-divider {
+  display: flex;
+  align-items: center;
+
+  gap: 16px;
+
+  margin: 37px 0 27px;
+}
+
+.continue-divider span {
+  flex: 1;
+
+  height: 1px;
+
+  background: #dedad8;
+}
+
+.continue-divider p {
+  margin: 0;
+
+  color: #8a8184;
+
+  font-size: 13px;
+
+  white-space: nowrap;
+}
+
+/* =========================================
+   SOCIAL BUTTONS
+========================================= */
+
+.social-btn {
+  width: 100%;
+  height: 60px;
+
+  margin-bottom: 13px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 12px;
+
+  border: 1px solid #d8d4d2;
+  border-radius: 14px;
+
+  background: #ffffff;
+  color: #302629;
+
+  font-family: inherit;
+
+  font-size: 16px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s,
+    border 0.2s;
+}
+
+.social-btn:hover {
+  background: #f7f5f3;
+
+  border-color: #c7c1be;
+}
+
+/* =========================================
+   GOOGLE LOGO
+========================================= */
+
+.google-logo {
+  width: 20px;
+  height: 20px;
+
+  flex-shrink: 0;
+}
+
+/* =========================================
+   APPLE LOGO
+========================================= */
+
+.apple-logo {
+  width: 20px;
+  height: 20px;
+
+  flex-shrink: 0;
+
+  color: #222222;
+}
+
+/* =========================================
+   TERMS
+========================================= */
+
+.terms {
+  max-width: 450px;
+
+  margin: 30px auto 0;
+
+  color: #948c8e;
+
+  font-size: 12px;
+
+  line-height: 1.6;
+
+  text-align: center;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 1000px) {
+  .login-page {
+    grid-template-columns: 1fr;
+  }
+
+  .login-left {
+    display: none;
+  }
+
+  .login-right {
+    min-height: 100vh;
+
+    padding: 45px 30px;
+  }
+}
+
+@media (max-width: 550px) {
+  .login-right {
+    padding: 35px 20px;
+  }
+
+  .form-heading h2 {
+    font-size: 40px;
+  }
+
+  .form-heading p {
+    font-size: 15px;
+  }
+
+  .form-group input,
+  .signin-btn {
+    height: 58px;
+  }
+
+  .social-btn {
+    height: 56px;
+  }
+}
+.portal-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.portal-option {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #d9dee7;
+  border-radius: 8px;
+  background: #ffffff;
+  text-align: left;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.portal-option strong {
+  display: block;
+  font-size: 14px;
+  color: #172033;
+  margin-bottom: 3px;
+}
+
+.portal-option span {
+  display: block;
+  font-size: 12px;
+  color: #7a8494;
+}
+
+.portal-option:hover {
+  border-color: #1f2937;
+}
+
+.portal-option.selected {
+  border-color: #172033;
+  background: #f5f7fa;
+}
+
+.signin-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

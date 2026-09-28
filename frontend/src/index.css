@@ -5,31 +5,31 @@
 html,
 body,
 #root {
+  width: 100%;
+  min-width: 100%;
+  min-height: 100%;
   margin: 0;
   padding: 0;
-  width: 100%;
+}
+
+html {
   min-height: 100%;
 }
 
 body {
+  min-height: 100vh;
+  margin: 0;
+
   font-family: Arial, Helvetica, sans-serif;
-  background: #f7f5f1;
-  color: #2d2024;
+
+  background: #faf9f7;
 }
 
 button,
 input {
-  font: inherit;
+  font-family: inherit;
 }
 
 button {
   cursor: pointer;
-}
-
-a {
-  text-decoration: none;
-}
-
-img {
-  max-width: 100%;
 }

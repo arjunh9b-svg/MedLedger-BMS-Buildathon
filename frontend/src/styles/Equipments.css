@@ -1,0 +1,329 @@
+.equipments-page {
+  min-height: calc(100vh - 72px);
+  background: #f8f5f2;
+  color: #29191f;
+  padding: 48px 42px 70px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* HEADER */
+
+.equipments-header {
+  max-width: 1450px;
+  margin: 0 auto 38px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 30px;
+}
+
+.equipments-eyebrow {
+  margin: 0 0 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+  color: #8a777d;
+}
+
+.equipments-header h1 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 46px;
+  line-height: 1.08;
+  font-weight: 400;
+  letter-spacing: -1.5px;
+}
+
+.equipments-header p:last-child {
+  margin: 13px 0 0;
+  font-size: 14px;
+  color: #75696d;
+}
+
+/* REGISTER BUTTON */
+
+.equipment-register-btn {
+  height: 44px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 8px;
+  background: #3b252d;
+  color: #fffaf6;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.equipment-register-btn:hover {
+  background: #51333d;
+}
+
+/* LIST */
+
+.equipment-list {
+  max-width: 1450px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+/* CARD */
+
+.equipment-card {
+  min-height: 150px;
+  padding: 22px 24px;
+  box-sizing: border-box;
+  background: #ffffff;
+  border: 1px solid #e4dedb;
+  border-radius: 12px;
+  color: #29191f;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+.equipment-card:hover {
+  border-color: #cdbfc0;
+  box-shadow: 0 6px 18px rgba(41, 25, 31, 0.07);
+  transform: translateY(-2px);
+}
+
+/* CARD TOP */
+
+.equipment-card-main {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.equipment-card h2 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 21px;
+  font-weight: 400;
+  color: #29191f;
+}
+
+.equipment-model {
+  margin: 7px 0 0;
+  font-size: 12px;
+  color: #75696d;
+}
+
+.equipment-serial {
+  margin: 9px 0 0;
+  font-size: 11px;
+  color: #8a777d;
+}
+
+/* QR */
+
+.equipment-qr {
+  width: 58px;
+  height: 58px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e1dbd7;
+  border-radius: 7px;
+  background: #fffdfb;
+  overflow: hidden;
+}
+
+.equipment-qr img {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+}
+
+.equipment-qr span {
+  font-size: 9px;
+  font-weight: 700;
+  color: #8a777d;
+}
+
+/* BOTTOM */
+
+.equipment-card-bottom {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #eee9e6;
+
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.equipment-id {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.equipment-id span {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #9a8d91;
+}
+
+.equipment-id strong {
+  font-size: 11px;
+  font-weight: 700;
+  color: #3b252d;
+}
+
+/* STATUS */
+
+.equipment-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.equipment-status span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.equipment-status.valid {
+  color: #52735e;
+}
+
+.equipment-status.valid span {
+  background: #6f9a7d;
+}
+
+.equipment-status.due-soon {
+  color: #92713b;
+}
+
+.equipment-status.due-soon span {
+  background: #c39b50;
+}
+
+.equipment-status.overdue {
+  color: #9a4c4c;
+}
+
+.equipment-status.overdue span {
+  background: #b96b6b;
+}
+
+/* VIEW RECORD */
+
+.view-record {
+  font-size: 10px;
+  font-weight: 700;
+  color: #6d5b61;
+  white-space: nowrap;
+}
+
+.equipment-card:hover .view-record {
+  color: #3b252d;
+}
+
+/* ERROR */
+
+.equipment-error {
+  max-width: 1450px;
+  margin: 0 auto 20px;
+  padding: 14px 16px;
+  border: 1px solid #e5caca;
+  border-radius: 8px;
+  background: #f8e9e9;
+  color: #8b3030;
+  font-size: 13px;
+}
+
+/* EMPTY */
+
+.equipment-empty {
+  max-width: 1450px;
+  margin: 0 auto;
+  padding: 55px 30px;
+  text-align: center;
+  background: #ffffff;
+  border: 1px solid #e4dedb;
+  border-radius: 12px;
+}
+
+.equipment-empty h2 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 25px;
+  font-weight: 400;
+}
+
+.equipment-empty p {
+  margin: 9px 0 20px;
+  font-size: 13px;
+  color: #75696d;
+}
+
+.equipment-empty button {
+  height: 40px;
+  padding: 0 17px;
+  border: 0;
+  border-radius: 7px;
+  background: #3b252d;
+  color: #fffaf6;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 1000px) {
+  .equipments-page {
+    padding: 40px 28px 60px;
+  }
+
+  .equipment-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 650px) {
+  .equipments-page {
+    padding: 30px 16px 45px;
+  }
+
+  .equipments-header {
+    align-items: flex-start;
+    flex-direction: column;
+    margin-bottom: 30px;
+  }
+
+  .equipments-header h1 {
+    font-size: 36px;
+  }
+
+  .equipment-register-btn {
+    width: 100%;
+  }
+
+  .equipment-card {
+    padding: 19px;
+  }
+
+  .equipment-card-bottom {
+    gap: 12px;
+  }
+
+  .view-record {
+    display: none;
+  }
+}
