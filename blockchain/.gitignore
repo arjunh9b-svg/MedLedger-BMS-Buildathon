@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# Hardhat generated files
+cache/
+artifacts/
+
+# Coverage reports
+coverage/
+
+# Gas snapshot files
+.gas-snapshot
+
+# Snapshot cheatcodes output
+snapshots/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Hardhat keystore
+.keystore/
