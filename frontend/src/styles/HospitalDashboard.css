@@ -1,396 +1,529 @@
-* {
-  box-sizing: border-box;
-}
-
 /* =========================================
    PAGE
 ========================================= */
 
-.dashboard-page {
+.hospital-dashboard-page {
   min-height: 100vh;
   background: #f8f5f2;
   color: #29191f;
   font-family: Arial, Helvetica, sans-serif;
 }
 
+
 /* =========================================
-   HEADER
+   NAVBAR
 ========================================= */
 
-.dashboard-header {
-  height: 76px;
+.hospital-navbar {
+  height: 72px;
   padding: 0 42px;
 
-  display: flex;
-  align-items: center;
+  box-sizing: border-box;
 
   background: #3b252d;
-  color: #fffaf6;
 
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.dashboard-brand {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+
+  gap: 24px;
+}
+
+
+/* =========================================
+   BRAND
+========================================= */
+
+.hospital-brand {
+  display: flex;
+  align-items: center;
+
   gap: 10px;
 
   color: #fffaf6;
   text-decoration: none;
 
-  font-size: 18px;
-  font-weight: 700;
-
-  white-space: nowrap;
+  flex-shrink: 0;
 }
 
-.dashboard-logo {
-  width: 35px;
-  height: 35px;
+.hospital-logo {
+  width: 42px;
+  height: 42px;
+
+  border: 1.5px solid #f5e7b3;
+  border-radius: 8px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  border: 1.5px solid #f5e7b3;
-  border-radius: 9px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 23px;
 
   color: #f5e7b3;
 
-  font-family: Georgia, serif;
-  font-size: 18px;
-  font-weight: bold;
+  box-sizing: border-box;
 }
 
-.dashboard-nav {
-  flex: 1;
+.hospital-brand span {
+  font-family: Georgia, "Times New Roman", serif;
 
+  font-size: 21px;
+  font-weight: 700;
+
+  letter-spacing: -0.3px;
+}
+
+
+/* =========================================
+   NAVIGATION
+========================================= */
+
+.hospital-nav {
   display: flex;
   align-items: center;
-  justify-content: center;
 
-  gap: 24px;
-  margin-left: 35px;
+  gap: 25px;
+
+  margin-left: auto;
 }
 
-.dashboard-nav a {
+.hospital-nav a {
   position: relative;
 
-  padding: 29px 0 25px;
+  padding: 26px 0 23px;
 
-  color: #d9ced1;
+  color: #fffaf6;
+
   text-decoration: none;
 
-  font-size: 12px;
-  font-weight: 600;
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 13px;
+  font-weight: 700;
 
   white-space: nowrap;
 
-  transition: color 0.2s ease;
+  opacity: 0.95;
 }
 
-.dashboard-nav a:hover {
-  color: #ffffff;
+.hospital-nav a:hover {
+  opacity: 1;
 }
 
-.dashboard-nav a.active {
-  color: #fffaf6;
-}
-
-.dashboard-nav a.active::after {
+.hospital-nav a.active::after {
   content: "";
 
   position: absolute;
 
   left: 0;
   right: 0;
-  bottom: 17px;
+  bottom: 15px;
 
   height: 2px;
 
   background: #f5e7b3;
+
+  border-radius: 2px;
 }
 
-.dashboard-user {
-  margin-left: 20px;
+
+/* =========================================
+   USER
+========================================= */
+
+.hospital-user {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  flex-shrink: 0;
 }
 
-.user-avatar {
-  width: 35px;
-  height: 35px;
+.hospital-avatar {
+  width: 42px;
+  height: 42px;
+
+  border-radius: 50%;
+
+  background: #f5e7b3;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  border-radius: 50%;
+  color: #29191f;
 
-  background: #f5e7b3;
-  color: #3b252d;
+  font-family: Georgia, "Times New Roman", serif;
 
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
 }
+
+.hospital-admin {
+  color: #fffaf6;
+
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.hospital-logout {
+  height: 38px;
+
+  padding: 0 16px;
+
+  border: 1px solid rgba(245, 231, 179, 0.35);
+
+  border-radius: 7px;
+
+  background: transparent;
+
+  color: #fffaf6;
+
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.hospital-logout:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
 
 /* =========================================
    MAIN
 ========================================= */
 
-.dashboard-main {
-  max-width: 1450px;
+.hospital-dashboard-main {
+  padding: 58px 58px 65px;
+
+  max-width: 1650px;
+
   margin: 0 auto;
 
-  padding: 48px 42px 70px;
+  box-sizing: border-box;
 }
+
 
 /* =========================================
-   TOP
+   DASHBOARD HEADER
 ========================================= */
 
-.dashboard-top {
+.hospital-dashboard-heading {
   display: flex;
+
   align-items: flex-end;
+
   justify-content: space-between;
 
-  margin-bottom: 35px;
+  gap: 30px;
+
+  margin-bottom: 34px;
 }
 
-.dashboard-eyebrow {
-  margin: 0 0 10px;
+.hospital-eyebrow {
+  margin: 0 0 9px;
 
-  color: #8a777d;
+  color: #7d6d73;
 
-  font-size: 11px;
+  font-size: 9px;
+
   font-weight: 700;
 
-  letter-spacing: 1.8px;
+  letter-spacing: 1.7px;
 }
 
-.dashboard-top h1 {
+.hospital-dashboard-heading h1 {
   margin: 0;
-
-  color: #29191f;
 
   font-family: Georgia, "Times New Roman", serif;
 
-  font-size: 46px;
+  font-size: 42px;
+
+  line-height: 1.05;
+
   font-weight: 400;
 
-  letter-spacing: -1.5px;
+  letter-spacing: -1px;
 }
 
-.dashboard-subtitle {
+.hospital-dashboard-heading > div > p:last-child {
   margin: 10px 0 0;
 
   color: #75696d;
 
-  font-size: 14px;
+  font-size: 11px;
 }
 
-.register-button {
-  height: 44px;
 
-  display: flex;
-  align-items: center;
-  gap: 8px;
+/* =========================================
+   REGISTER BUTTON
+========================================= */
 
-  padding: 0 17px;
+.hospital-register-button {
+  height: 48px;
 
-  border-radius: 9px;
+  padding: 0 20px;
+
+  border-radius: 8px;
 
   background: #3b252d;
+
   color: #fffaf6;
 
   text-decoration: none;
 
-  font-size: 13px;
-  font-weight: 600;
+  display: flex;
 
-  transition:
-    background 0.2s ease,
-    transform 0.2s ease;
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 8px;
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  white-space: nowrap;
 }
 
-.register-button:hover {
-  background: #29191f;
-  transform: translateY(-1px);
+.hospital-register-button span {
+  font-size: 17px;
+
+  line-height: 1;
 }
+
+.hospital-register-button:hover {
+  background: #51333d;
+}
+
 
 /* =========================================
-   STAT CARDS
+   STATS
 ========================================= */
 
-.stats-grid {
+.hospital-stats-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
 
-  gap: 16px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  gap: 14px;
 
   margin-bottom: 18px;
 }
 
-.stat-card {
-  min-height: 145px;
+.hospital-stat-card {
+  min-height: 158px;
+
+  padding: 24px;
+
+  box-sizing: border-box;
+
+  background: #ffffff;
+
+  border: 1px solid #e4dedb;
+
+  border-radius: 12px;
 
   display: flex;
+
   align-items: flex-start;
 
   gap: 17px;
 
-  padding: 23px;
-
-  border: 1px solid #e4dedb;
-  border-radius: 14px;
-
-  background: #ffffff;
-
-  box-shadow: 0 3px 12px rgba(41, 25, 31, 0.035);
+  box-shadow: 0 5px 18px rgba(41, 25, 31, 0.025);
 }
 
-.stat-icon {
-  width: 40px;
-  height: 40px;
+
+/* STAT ICON */
+
+.hospital-stat-icon {
+  width: 50px;
+  height: 50px;
 
   flex-shrink: 0;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
   border-radius: 10px;
 
-  background: #f1e9e7;
-  color: #3b252d;
+  background: #f1e8e5;
 
-  font-size: 15px;
-  font-weight: 700;
-}
-
-.stat-icon.green {
-  background: #e6eee9;
-  color: #648d79;
-}
-
-.stat-icon.warning {
-  background: #f4eddb;
-  color: #9a7e42;
-}
-
-.stat-icon.danger {
-  background: #f2e3e1;
-  color: #a26762;
-}
-
-.stat-content {
   display: flex;
-  flex-direction: column;
-}
 
-.stat-content span {
-  color: #786c70;
-  font-size: 12px;
-}
+  align-items: center;
 
-.stat-content strong {
-  margin-top: 6px;
-
-  color: #29191f;
-
-  font-family: Georgia, serif;
-
-  font-size: 31px;
-  font-weight: 400;
-}
-
-.stat-content small {
-  margin-top: 4px;
-
-  color: #9a9093;
-
-  font-size: 11px;
-}
-
-/* =========================================
-   GRID
-========================================= */
-
-.dashboard-grid {
-  display: grid;
-
-  grid-template-columns: 1fr 1fr;
-
-  gap: 18px;
-
-  margin-bottom: 18px;
-}
-
-/* =========================================
-   CARDS
-========================================= */
-
-.dashboard-card {
-  padding: 25px;
-
-  border: 1px solid #e4dedb;
-  border-radius: 14px;
-
-  background: #ffffff;
-
-  box-shadow: 0 3px 12px rgba(41, 25, 31, 0.035);
-}
-
-.card-heading {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-
-  margin-bottom: 23px;
-}
-
-.card-heading h2 {
-  margin: 4px 0 0;
+  justify-content: center;
 
   color: #29191f;
 
   font-family: Georgia, "Times New Roman", serif;
 
-  font-size: 24px;
-  font-weight: 400;
+  font-size: 22px;
 }
 
-.card-heading > span {
-  color: #6d9b85;
-  font-size: 15px;
+.hospital-stat-icon.verified {
+  background: #e6f0eb;
+
+  color: #648d79;
 }
 
-.card-heading > a {
+.hospital-stat-icon.due {
+  background: #f5eedb;
+
+  color: #ae7e24;
+}
+
+.hospital-stat-icon.overdue {
+  background: #f3e3e1;
+
+  color: #a95757;
+}
+
+
+/* =========================================
+   STAT TEXT
+========================================= */
+
+.hospital-stat-content {
   display: flex;
-  align-items: center;
 
-  gap: 5px;
+  flex-direction: column;
 
-  color: #3b252d;
+  min-width: 0;
+}
 
-  text-decoration: none;
+.hospital-stat-content > span {
+  color: #75696d;
+
+  font-family: Georgia, "Times New Roman", serif;
 
   font-size: 12px;
-  font-weight: 600;
+
+  line-height: 1.25;
 }
 
-.card-heading > a:hover {
-  text-decoration: underline;
+.hospital-stat-content strong {
+  margin-top: 8px;
+
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 25px;
+
+  line-height: 1;
+
+  font-weight: 400;
+
+  color: #29191f;
 }
 
-.card-label {
-  margin: 0;
+.hospital-stat-content small {
+  margin-top: 8px;
 
-  color: #95878b;
+  color: #8a777d;
+
+  font-family: Georgia, "Times New Roman", serif;
 
   font-size: 10px;
+
+  line-height: 1.35;
+}
+
+
+/* =========================================
+   LOWER GRID
+========================================= */
+
+.hospital-dashboard-grid {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 14px;
+
+  margin-bottom: 18px;
+}
+
+
+/* =========================================
+   CARD
+========================================= */
+
+.hospital-card {
+  background: #ffffff;
+
+  border: 1px solid #e4dedb;
+
+  border-radius: 12px;
+
+  padding: 24px;
+
+  box-sizing: border-box;
+
+  box-shadow: 0 5px 18px rgba(41, 25, 31, 0.025);
+}
+
+.hospital-card-heading {
+  display: flex;
+
+  align-items: flex-start;
+
+  justify-content: space-between;
+
+  gap: 15px;
+
+  margin-bottom: 18px;
+}
+
+.hospital-card-heading p {
+  margin: 0 0 5px;
+
+  color: #8a777d;
+
+  font-size: 9px;
+
   font-weight: 700;
 
   letter-spacing: 1.5px;
 }
+
+.hospital-card-heading h2 {
+  margin: 0;
+
+  color: #29191f;
+
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 21px;
+
+  line-height: 1.1;
+
+  font-weight: 400;
+}
+
+.hospital-card-heading > a {
+  color: #29191f;
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+  text-decoration: none;
+
+  white-space: nowrap;
+
+  margin-top: 10px;
+}
+
+.hospital-card-heading > a:hover {
+  text-decoration: underline;
+}
+
 
 /* =========================================
    BLOCKCHAIN
@@ -404,36 +537,43 @@
   color: #fffaf6;
 }
 
-.blockchain-card .card-heading h2 {
+.blockchain-card .hospital-card-heading p {
+  color: #f5e7b3;
+}
+
+.blockchain-card .hospital-card-heading h2 {
   color: #fffaf6;
 }
 
-.blockchain-card .card-label {
-  color: #d8c9cd;
-}
+.blockchain-symbol {
+  color: #f5e7b3;
 
-.blockchain-card .card-heading > span {
-  color: #b7d3c5;
+  font-size: 14px;
+
+  margin-top: 7px;
 }
 
 .blockchain-status {
   display: flex;
 
-  gap: 12px;
+  align-items: flex-start;
 
-  padding: 17px;
+  gap: 9px;
 
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 11px;
+  padding: 14px;
 
-  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+
+  border-radius: 8px;
+
+  background: rgba(255, 255, 255, 0.035);
 }
 
-.status-dot {
-  width: 9px;
-  height: 9px;
+.blockchain-status-dot {
+  width: 8px;
+  height: 8px;
 
-  margin-top: 5px;
+  margin-top: 4px;
 
   flex-shrink: 0;
 
@@ -441,24 +581,26 @@
 
   background: #87b49d;
 
-  box-shadow: 0 0 0 4px rgba(135, 180, 157, 0.12);
-}
-
-.blockchain-status div:last-child {
-  display: flex;
-  flex-direction: column;
-
-  gap: 5px;
+  box-shadow: 0 0 0 4px rgba(135, 180, 157, 0.1);
 }
 
 .blockchain-status strong {
-  font-size: 13px;
+  display: block;
+
+  color: #fffaf6;
+
+  font-size: 12px;
 }
 
 .blockchain-status span {
-  color: #d2c5c9;
+  display: block;
 
-  font-size: 11px;
+  margin-top: 5px;
+
+  color: #d9ced1;
+
+  font-size: 10px;
+
   line-height: 1.5;
 }
 
@@ -467,338 +609,404 @@
 
   grid-template-columns: repeat(3, 1fr);
 
-  gap: 12px;
+  gap: 15px;
 
   margin-top: 18px;
 }
 
 .blockchain-details div {
   display: flex;
+
   flex-direction: column;
 
-  gap: 5px;
-
-  padding-right: 10px;
-
-  border-right: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-.blockchain-details div:last-child {
-  border-right: none;
+  gap: 4px;
 }
 
 .blockchain-details span {
-  color: #bcaeb2;
+  color: #c7b9bd;
 
-  font-size: 10px;
-}
-
-.blockchain-details strong {
-  color: #fffaf6;
-
-  font-size: 19px;
-  font-weight: 600;
-}
-
-/* =========================================
-   EQUIPMENT OVERVIEW
-========================================= */
-
-.overview-list {
-  display: flex;
-  flex-direction: column;
-}
-
-.overview-row {
-  min-height: 61px;
-
-  display: flex;
-  align-items: center;
-
-  gap: 12px;
-
-  border-top: 1px solid #eee9e6;
-
-  text-decoration: none;
-}
-
-.overview-row:first-child {
-  border-top: none;
-}
-
-.overview-icon {
-  width: 34px;
-  height: 34px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 8px;
-
-  background: #f4efed;
-  color: #665158;
-
-  font-size: 13px;
-}
-
-.overview-row div:nth-child(2) {
-  flex: 1;
-
-  display: flex;
-  flex-direction: column;
-
-  gap: 3px;
-}
-
-.overview-row strong {
-  color: #382a2f;
-
-  font-size: 12px;
-}
-
-.overview-row span {
-  color: #968b8e;
-
-  font-size: 10px;
-}
-
-.overview-row b {
-  color: #3b252d;
-
-  font-size: 16px;
-}
-
-/* =========================================
-   ACTIVITY
-========================================= */
-
-.activity-card {
-  padding-bottom: 12px;
-}
-
-.activity-table {
-  width: 100%;
-}
-
-.activity-header,
-.activity-row {
-  display: grid;
-
-  grid-template-columns:
-    1.4fr
-    1.5fr
-    1fr
-    0.7fr;
-
-  align-items: center;
-
-  column-gap: 20px;
-}
-
-.activity-header {
-  padding: 0 0 12px;
-
-  border-bottom: 1px solid #e7e0dc;
-
-  color: #95898d;
-
-  font-size: 10px;
-  font-weight: 700;
+  font-size: 8px;
 
   text-transform: uppercase;
 
   letter-spacing: 0.8px;
 }
 
-.activity-row {
-  min-height: 67px;
+.blockchain-details strong {
+  color: #fffaf6;
+
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 18px;
+
+  font-weight: 400;
+}
+
+
+/* =========================================
+   EQUIPMENT OVERVIEW
+========================================= */
+
+.hospital-overview-list {
+  display: flex;
+
+  flex-direction: column;
+}
+
+.hospital-overview-row {
+  min-height: 63px;
+
+  padding: 8px 0;
+
+  box-sizing: border-box;
+
+  display: grid;
+
+  grid-template-columns: 40px 1fr auto;
+
+  align-items: center;
+
+  gap: 11px;
 
   border-bottom: 1px solid #eee9e6;
-
-  font-size: 12px;
-
-  cursor: pointer;
-
-  transition: background 0.15s ease;
 }
 
-.activity-row:last-child {
-  border-bottom: none;
+.hospital-overview-row:last-child {
+  border-bottom: 0;
 }
 
-.activity-row:hover {
-  background: #faf8f6;
-}
+.hospital-overview-icon {
+  width: 40px;
+  height: 40px;
 
-.activity-row div {
+  border-radius: 8px;
+
+  background: #f3eeeb;
+
   display: flex;
-  flex-direction: column;
 
-  gap: 4px;
+  align-items: center;
+
+  justify-content: center;
+
+  color: #3b252d;
+
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 15px;
 }
 
-.activity-row strong {
-  color: #382a2f;
+.hospital-overview-row strong {
+  display: block;
 
-  font-size: 12px;
-}
-
-.activity-row small {
-  color: #a09699;
-
-  font-size: 10px;
-}
-
-.activity-row > span {
-  color: #756b6e;
+  color: #29191f;
 
   font-size: 11px;
 }
 
-.activity-success,
-.activity-warning,
-.activity-danger {
-  justify-self: start;
+.hospital-overview-row span {
+  display: block;
 
-  padding: 6px 9px;
+  margin-top: 3px;
 
-  border-radius: 20px;
+  color: #8a777d;
 
-  font-size: 10px;
+  font-size: 9px;
+}
+
+.hospital-overview-row b {
+  color: #29191f;
+
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 18px;
+
+  font-weight: 400;
+}
+
+
+/* =========================================
+   RECENT ACTIVITY
+========================================= */
+
+.hospital-activity-card {
+  width: 100%;
+}
+
+.hospital-activity-list {
+  width: 100%;
+}
+
+.hospital-activity-header,
+.hospital-activity-row {
+  display: grid;
+
+  grid-template-columns: 1.2fr 1.2fr 0.8fr 0.6fr;
+
+  align-items: center;
+
+  gap: 15px;
+}
+
+.hospital-activity-header {
+  padding: 0 0 9px;
+
+  border-bottom: 1px solid #e9e4e1;
+
+  color: #8a777d;
+
+  font-size: 7px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.8px;
+
+  text-transform: uppercase;
+}
+
+.hospital-activity-row {
+  padding: 12px 0;
+
+  border-bottom: 1px solid #eee9e6;
+
+  color: #29191f;
+
+  text-decoration: none;
+
+  font-size: 9px;
+}
+
+.hospital-activity-row:last-child {
+  border-bottom: 0;
+}
+
+.hospital-activity-row:hover {
+  background: #fcfaf8;
+}
+
+.hospital-activity-row strong {
+  display: block;
+
+  font-size: 9px;
+}
+
+.hospital-activity-row small {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #8a777d;
+
+  font-size: 8px;
+}
+
+.hospital-activity-success {
+  color: #52735e;
+
   font-weight: 700;
 }
 
-.activity-success {
-  background: #e7efe9;
-  color: #648d79;
+.hospital-empty {
+  padding: 25px;
+
+  text-align: center;
+
+  color: #8a777d;
+
+  font-size: 10px;
 }
 
-.activity-warning {
-  background: #f4edda;
-  color: #94783d;
-}
-
-.activity-danger {
-  background: #f2e3e1;
-  color: #a26762;
-}
 
 /* =========================================
-   EMPTY / ERROR
+   ERROR
 ========================================= */
 
-.empty-records {
-  padding: 25px 0;
+.hospital-error {
+  padding: 12px 15px;
 
-  color: #95898d;
+  border: 1px solid #e5caca;
 
-  font-size: 12px;
+  border-radius: 8px;
+
+  background: #f8e9e9;
+
+  color: #8b3030;
+
+  font-size: 10px;
 }
 
-.error-message {
-  padding: 18px 20px;
 
-  border: 1px solid #e8c8c6;
-  border-radius: 10px;
+/* =========================================
+   DASHBOARD NAVBAR ONLY
+========================================= */
 
-  background: #f7e8e7;
+.hospital-dashboard-page .hospital-nav {
+  margin-left: auto;
+  margin-right: auto;
 
-  color: #9a403b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 28px;
+}
+
+.hospital-dashboard-page .hospital-nav a {
+  font-family: Arial, Helvetica, sans-serif;
 
   font-size: 13px;
+
+  font-weight: 600;
+
+  letter-spacing: 0.1px;
 }
+
+.hospital-dashboard-page .hospital-user {
+  margin-left: 0;
+}
+
 
 /* =========================================
    RESPONSIVE
 ========================================= */
 
-@media (max-width: 1200px) {
-  .dashboard-nav {
-    gap: 15px;
-    margin-left: 20px;
+@media (max-width: 1250px) {
+
+  .hospital-navbar {
+    padding: 0 35px;
   }
 
-  .dashboard-nav a {
-    font-size: 11px;
+  .hospital-nav {
+    gap: 20px;
   }
+
+  .hospital-nav a {
+    font-size: 12px;
+  }
+
+  .hospital-brand span {
+    font-size: 19px;
+  }
+
+  .hospital-dashboard-main {
+    padding-left: 35px;
+    padding-right: 35px;
+  }
+
 }
 
-@media (max-width: 1000px) {
-  .dashboard-header {
-    padding: 0 25px;
+
+@media (max-width: 1050px) {
+
+  .hospital-navbar {
+    height: auto;
+
+    min-height: 72px;
+
+    flex-wrap: wrap;
+
+    padding: 14px 28px;
   }
 
-  .dashboard-nav {
-    display: none;
+  .hospital-nav {
+    order: 3;
+
+    width: 100%;
+
+    justify-content: center;
+
+    overflow-x: auto;
   }
 
-  .dashboard-user {
-    margin-left: auto;
+  .hospital-nav a {
+    padding: 10px 0;
   }
 
-  .stats-grid {
+  .hospital-nav a.active::after {
+    bottom: 0;
+  }
+
+  .hospital-stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .dashboard-grid {
+  .hospital-dashboard-grid {
     grid-template-columns: 1fr;
   }
+
 }
 
-@media (max-width: 650px) {
-  .dashboard-main {
-    padding: 30px 18px 50px;
+
+@media (max-width: 700px) {
+
+  .hospital-dashboard-main {
+    padding: 38px 18px 50px;
   }
 
-  .dashboard-top {
+  .hospital-dashboard-heading {
     align-items: flex-start;
 
     flex-direction: column;
 
-    gap: 22px;
+    margin-bottom: 30px;
   }
 
-  .dashboard-top h1 {
-    font-size: 38px;
+  .hospital-dashboard-heading h1 {
+    font-size: 34px;
   }
 
-  .register-button {
+  .hospital-dashboard-heading > div > p:last-child {
+    font-size: 10px;
+  }
+
+  .hospital-register-button {
     width: 100%;
-
-    justify-content: center;
   }
 
-  .stats-grid {
+  .hospital-stats-grid {
     grid-template-columns: 1fr;
   }
 
-  .dashboard-card {
+  .hospital-stat-card {
+    min-height: 140px;
+  }
+
+  .hospital-card {
     padding: 19px;
   }
 
-  .blockchain-details {
+  .hospital-activity-header {
+    display: none;
+  }
+
+  .hospital-activity-row {
     grid-template-columns: 1fr;
+
+    gap: 8px;
   }
 
-  .blockchain-details div {
-    padding: 8px 0;
-
-    border-right: none;
-
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  .hospital-brand span {
+    font-size: 20px;
   }
 
-  .blockchain-details div:last-child {
-    border-bottom: none;
+  .hospital-logo {
+    width: 42px;
+    height: 42px;
+
+    font-size: 23px;
   }
 
-  .activity-table {
-    overflow-x: auto;
+  .hospital-user {
+    gap: 8px;
   }
 
-  .activity-header,
-  .activity-row {
-    min-width: 650px;
+  .hospital-admin {
+    display: none;
   }
+
+  .hospital-avatar {
+    width: 42px;
+    height: 42px;
+  }
+
 }

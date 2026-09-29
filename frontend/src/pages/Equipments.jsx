@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-import Navbar from "../components/Navbar";
+import HospitalNavbar from "../components/HospitalNavbar";
 import "../styles/Equipments.css";
 
 function Equipments() {
@@ -18,12 +18,18 @@ function Equipments() {
 
   const getEquipments = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:5000/api/equipments");
+      const response = await axios.get(
+        "http://127.0.0.1:5000/api/equipments"
+      );
 
       setEquipments(response.data);
+
     } catch (err) {
       console.error(err);
-      setError("Could not load equipment records.");
+      setError(
+        "Could not load equipment records."
+      );
+
     } finally {
       setLoading(false);
     }
@@ -37,7 +43,9 @@ function Equipments() {
     const today = new Date();
     const due = new Date(date);
 
-    const diff = (due - today) / (1000 * 60 * 60 * 24);
+    const diff =
+      (due - today) /
+      (1000 * 60 * 60 * 24);
 
     if (diff < 0) {
       return "Overdue";
@@ -53,111 +61,201 @@ function Equipments() {
   if (loading) {
     return (
       <div>
-        <Navbar />
+
+        <HospitalNavbar />
 
         <main className="equipments-page">
-          <h1>Equipments</h1>
-          <p>Loading equipment records...</p>
+
+          <h1>
+            Equipments
+          </h1>
+
+          <p>
+            Loading equipment records...
+          </p>
+
         </main>
+
       </div>
     );
   }
 
   return (
     <div>
-      <Navbar />
+
+      <HospitalNavbar />
 
       <main className="equipments-page">
+
         <div className="equipments-header">
+
           <div>
-            <p className="equipments-eyebrow">EQUIPMENT REGISTRY</p>
 
-            <h1>Equipments</h1>
+            <p className="equipments-eyebrow">
+              EQUIPMENT REGISTRY
+            </p>
 
-            <p>Registered medical equipment records.</p>
+            <h1>
+              Equipments
+            </h1>
+
+            <p>
+              Registered medical equipment records.
+            </p>
+
           </div>
+
 
           <button
             className="equipment-register-btn"
-            onClick={() => navigate("/register")}
+            onClick={() =>
+              navigate("/lab/register")
+            }
           >
             + Register Equipment
           </button>
+
         </div>
 
-        {error && <div className="equipment-error">{error}</div>}
 
-        {!error && equipments.length === 0 && (
-          <div className="equipment-empty">
-            <h2>No equipment registered</h2>
-
-            <p>
-              Register your first medical equipment to create a secure record.
-            </p>
-
-            <button onClick={() => navigate("/register")}>
-              Register Equipment
-            </button>
+        {error && (
+          <div className="equipment-error">
+            {error}
           </div>
         )}
 
+
+        {!error &&
+          equipments.length === 0 && (
+
+            <div className="equipment-empty">
+
+              <h2>
+                No equipment registered
+              </h2>
+
+              <p>
+                Register your first medical equipment
+                to create a secure record.
+              </p>
+
+              <button
+                onClick={() =>
+                  navigate("/lab/register")
+                }
+              >
+                Register Equipment
+              </button>
+
+            </div>
+          )}
+
+
         <div className="equipment-list">
+
           {equipments.map((equipment) => {
-            const status = getStatus(equipment.next_calibration_date);
+
+            const status = getStatus(
+              equipment.next_calibration_date
+            );
 
             return (
               <div
                 key={equipment.id}
                 className="equipment-card"
-                onClick={() => navigate(`/equipments/${equipment.id}`)}
+                onClick={() =>
+                  navigate(
+                    `/hospital/equipment/${equipment.id}`
+                  )
+                }
               >
+
                 <div className="equipment-card-main">
+
                   <div>
-                    <h2>{equipment.equipment_name}</h2>
+
+                    <h2>
+                      {equipment.equipment_name}
+                    </h2>
 
                     <p className="equipment-model">
-                      {equipment.manufacturer} · {equipment.model}
+                      {equipment.manufacturer}
+                      {" · "}
+                      {equipment.model}
                     </p>
 
                     <p className="equipment-serial">
-                      Serial: {equipment.serial_number}
+                      Serial:{" "}
+                      {equipment.serial_number}
                     </p>
+
                   </div>
 
+
                   <div className="equipment-qr">
+
                     {equipment.qr_code ? (
+
                       <img
                         src={`http://127.0.0.1:5000/uploads/${equipment.qr_code}`}
                         alt="Equipment QR"
                       />
+
                     ) : (
-                      <span>QR</span>
+
+                      <span>
+                        QR
+                      </span>
+
                     )}
+
                   </div>
+
                 </div>
 
+
                 <div className="equipment-card-bottom">
+
                   <div className="equipment-id">
-                    <span>Equipment ID</span>
-                    <strong>{equipment.id}</strong>
+
+                    <span>
+                      Equipment ID
+                    </span>
+
+                    <strong>
+                      {equipment.id}
+                    </strong>
+
                   </div>
+
 
                   <div
                     className={`equipment-status ${status
                       .toLowerCase()
                       .replace(" ", "-")}`}
                   >
+
                     <span></span>
+
                     {status}
+
                   </div>
 
-                  <div className="view-record">View Record →</div>
+
+                  <div className="view-record">
+                    View Record →
+                  </div>
+
                 </div>
+
               </div>
             );
           })}
+
         </div>
+
       </main>
+
     </div>
   );
 }

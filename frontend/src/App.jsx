@@ -3,26 +3,32 @@ import { useState } from "react";
 
 import Login from "./pages/Login";
 
-/* Hospital */
+/* ================= HOSPITAL ================= */
+
 import HospitalDashboard from "./pages/HospitalDashboard";
 import RegisterEquipment from "./pages/RegisterEquipment";
 import Equipments from "./pages/Equipments";
 import EquipmentDetails from "./pages/EquipmentDetails";
 import Maintenance from "./pages/Maintenance";
+import HospitalLabSelection from "./pages/HospitalLabSelection";
 
-/* Lab */
+/* ================= LAB ================= */
+
 import LabDashboard from "./pages/LabDashboard";
 import LabEquipments from "./pages/LabEquipments";
 import LabCertificates from "./pages/LabCertificates";
 import LabVerificationStatus from "./pages/LabVerificationStatus";
 import LabIssues from "./pages/LabIssues";
+import LabEquipmentDetails from "./pages/LabEquipmentDetails";
 
-/* Auditor */
+/* ================= AUDITOR ================= */
+
 import AuditorDashboard from "./pages/AuditorDashboard";
 import AuditorVerify from "./pages/AuditorVerify";
 import AuditorEquipment from "./pages/AuditorEquipment";
 import AuditorIssues from "./pages/AuditorIssues";
 import AuditorAudit from "./pages/AuditorAudit";
+
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -53,7 +59,6 @@ function App() {
     return element;
   };
 
-  /* Register Equipment is shared by Hospital and Lab */
   const protectRegistration = () => {
     if (!loggedIn) {
       return <Navigate to="/" replace />;
@@ -66,9 +71,12 @@ function App() {
     return <RegisterEquipment />;
   };
 
+
   return (
     <BrowserRouter>
+
       <Routes>
+
         {/* ================= LOGIN ================= */}
 
         <Route
@@ -82,11 +90,17 @@ function App() {
           }
         />
 
+
         {/* ================= HOSPITAL ================= */}
 
         <Route
           path="/hospital"
           element={protect("hospital", <HospitalDashboard />)}
+        />
+
+        <Route
+          path="/hospital/lab-selection"
+          element={protect("hospital", <HospitalLabSelection />)}
         />
 
         <Route
@@ -104,13 +118,21 @@ function App() {
           element={protect("hospital", <Maintenance />)}
         />
 
+
         {/* ================= SHARED REGISTER ================= */}
 
-        <Route path="/lab/register" element={protectRegistration()} />
+        <Route
+          path="/lab/register"
+          element={protectRegistration()}
+        />
+
 
         {/* ================= LAB ================= */}
 
-        <Route path="/lab" element={protect("lab", <LabDashboard />)} />
+        <Route
+          path="/lab"
+          element={protect("lab", <LabDashboard />)}
+        />
 
         <Route
           path="/lab/equipments"
@@ -119,7 +141,7 @@ function App() {
 
         <Route
           path="/lab/equipments/:id"
-          element={protect("lab", <EquipmentDetails />)}
+          element={protect("lab", <LabEquipmentDetails />)}
         />
 
         <Route
@@ -132,7 +154,11 @@ function App() {
           element={protect("lab", <LabVerificationStatus />)}
         />
 
-        <Route path="/lab/issues" element={protect("lab", <LabIssues />)} />
+        <Route
+          path="/lab/issues"
+          element={protect("lab", <LabIssues />)}
+        />
+
 
         {/* ================= AUDITOR ================= */}
 
@@ -161,50 +187,21 @@ function App() {
           element={protect("auditor", <AuditorAudit />)}
         />
 
-        {/* ================= OLD ROUTES ================= */}
-
-        <Route
-          path="/dashboard"
-          element={<Navigate to={getPortalPath()} replace />}
-        />
-
-        <Route
-          path="/register"
-          element={<Navigate to="/lab/register" replace />}
-        />
-
-        <Route
-          path="/equipments"
-          element={<Navigate to="/hospital/equipment" replace />}
-        />
-
-        <Route
-          path="/maintenance"
-          element={<Navigate to="/hospital/maintenance" replace />}
-        />
-
-        <Route
-          path="/inspection"
-          element={<Navigate to="/auditor" replace />}
-        />
-
-        <Route
-          path="/verify"
-          element={<Navigate to="/auditor/verify" replace />}
-        />
-
-        <Route
-          path="/audit"
-          element={<Navigate to="/auditor/audit" replace />}
-        />
 
         {/* ================= FALLBACK ================= */}
 
         <Route
           path="*"
-          element={<Navigate to={loggedIn ? getPortalPath() : "/"} replace />}
+          element={
+            <Navigate
+              to={loggedIn ? getPortalPath() : "/"}
+              replace
+            />
+          }
         />
+
       </Routes>
+
     </BrowserRouter>
   );
 }

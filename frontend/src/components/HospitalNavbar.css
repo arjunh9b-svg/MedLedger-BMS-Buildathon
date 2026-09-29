@@ -1,0 +1,178 @@
+.hospital-navbar {
+  width: 100%;
+  min-height: 72px;
+  padding: 0 32px;
+
+  display: flex;
+  align-items: center;
+  gap: 30px;
+
+  background: #3b252d;
+  box-sizing: border-box;
+}
+
+/* ================= BRAND ================= */
+
+.hospital-navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  text-decoration: none;
+  color: #ffffff;
+
+  flex-shrink: 0;
+}
+
+.hospital-navbar-logo {
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #f5e7b3;
+  color: #3b252d;
+
+  border-radius: 8px;
+
+  font-family: Georgia, serif;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.hospital-navbar-brand span {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* ================= NAVIGATION ================= */
+
+.hospital-navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+
+  flex: 1;
+  white-space: nowrap;
+}
+
+.hospital-nav-link {
+  color: #e8dfe1;
+
+  text-decoration: none;
+
+  font-size: 13px;
+  font-weight: 500;
+
+  padding: 8px 0;
+
+  transition: 0.2s ease;
+}
+
+.hospital-nav-link:hover {
+  color: #f5e7b3;
+}
+
+.hospital-nav-link.active {
+  color: #f5e7b3;
+  font-weight: 600;
+}
+
+/* ================= USER ================= */
+
+.hospital-navbar-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  flex-shrink: 0;
+}
+
+.hospital-navbar-avatar {
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #648d79;
+  color: #ffffff;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.hospital-navbar-name {
+  color: #ffffff;
+  font-size: 13px;
+}
+
+/* ================= LOGOUT ================= */
+
+.hospital-navbar-logout {
+  border: 1px solid #80616b;
+
+  background: transparent;
+  color: #ffffff;
+
+  padding: 7px 12px;
+
+  border-radius: 7px;
+
+  cursor: pointer;
+
+  font-size: 12px;
+
+  transition: 0.2s ease;
+}
+
+.hospital-navbar-logout:hover {
+  background: #51323d;
+  border-color: #a17d87;
+}
+
+/* ================= TABLET ================= */
+
+@media (max-width: 1000px) {
+  .hospital-navbar {
+    padding: 0 18px;
+    gap: 18px;
+  }
+
+  .hospital-navbar-links {
+    gap: 12px;
+  }
+
+  .hospital-navbar-name {
+    display: none;
+  }
+}
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 750px) {
+  .hospital-navbar {
+    flex-wrap: wrap;
+    padding: 14px 18px;
+  }
+
+  .hospital-navbar-links {
+    order: 3;
+
+    width: 100%;
+
+    overflow-x: auto;
+
+    padding-bottom: 4px;
+  }
+
+  .hospital-navbar-user {
+    margin-left: auto;
+  }
+}

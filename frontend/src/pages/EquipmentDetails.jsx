@@ -10,7 +10,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 
-import Navbar from "../components/Navbar";
+import HospitalNavbar from "../components/HospitalNavbar";
 import "../styles/EquipmentDetails.css";
 
 function EquipmentDetails() {
@@ -82,16 +82,21 @@ function EquipmentDetails() {
   const viewPdf = (filename) => {
     if (!filename) return;
 
-    window.open(`http://127.0.0.1:5000/uploads/${filename}`, "_blank");
+    window.open(
+      `http://127.0.0.1:5000/uploads/${filename}`,
+      "_blank",
+    );
   };
 
   if (loading) {
     return (
       <div>
-        <Navbar />
+        <HospitalNavbar />
 
         <main className="details-page">
-          <div className="details-loading">Loading equipment record...</div>
+          <div className="details-loading">
+            Loading equipment record...
+          </div>
         </main>
       </div>
     );
@@ -100,7 +105,7 @@ function EquipmentDetails() {
   if (error || !equipment) {
     return (
       <div>
-        <Navbar />
+        <HospitalNavbar />
 
         <main className="details-page">
           <div className="details-error">
@@ -124,15 +129,16 @@ function EquipmentDetails() {
 
   return (
     <div>
-      <Navbar />
+      <HospitalNavbar />
 
       <main className="details-page">
+
         {/* HEADER */}
 
         <div className="details-top">
           <button
             className="back-button"
-            onClick={() => navigate("/equipments")}
+            onClick={() => navigate("/hospital/equipment")}
           >
             <ArrowLeft size={15} />
             Equipments
@@ -140,7 +146,9 @@ function EquipmentDetails() {
 
           <div className="details-heading">
             <div className="details-heading-left">
-              <p className="details-label">EQUIPMENT RECORD</p>
+              <p className="details-label">
+                EQUIPMENT RECORD
+              </p>
 
               <h1>{equipment.equipment_name}</h1>
 
@@ -171,7 +179,9 @@ function EquipmentDetails() {
         <section className="record-panel">
           <div className="panel-header">
             <div>
-              <p className="panel-label">MACHINE INFORMATION</p>
+              <p className="panel-label">
+                MACHINE INFORMATION
+              </p>
 
               <h2>Equipment details</h2>
             </div>
@@ -205,12 +215,16 @@ function EquipmentDetails() {
 
             <div className="info-item">
               <span>Hospital</span>
-              <strong>{equipment.hospital || "—"}</strong>
+              <strong>
+                {equipment.hospital || "—"}
+              </strong>
             </div>
 
             <div className="info-item">
               <span>Department / Location</span>
-              <strong>{equipment.department || "—"}</strong>
+              <strong>
+                {equipment.department || "—"}
+              </strong>
             </div>
           </div>
         </section>
@@ -220,7 +234,9 @@ function EquipmentDetails() {
         <section className="record-panel">
           <div className="panel-header">
             <div>
-              <p className="panel-label">CALIBRATION</p>
+              <p className="panel-label">
+                CALIBRATION
+              </p>
 
               <h2>Calibration schedule</h2>
             </div>
@@ -238,19 +254,29 @@ function EquipmentDetails() {
             <div className="calibration-item">
               <span>Last Calibration</span>
 
-              <strong>{formatDate(equipment.calibration_date)}</strong>
+              <strong>
+                {formatDate(
+                  equipment.calibration_date
+                )}
+              </strong>
             </div>
 
             <div className="calibration-item">
               <span>Next Calibration Due</span>
 
-              <strong>{formatDate(equipment.next_calibration_date)}</strong>
+              <strong>
+                {formatDate(
+                  equipment.next_calibration_date
+                )}
+              </strong>
             </div>
 
             <div className="calibration-item">
               <span>Certificate Reference</span>
 
-              <strong>{equipment.certificate_reference || "—"}</strong>
+              <strong>
+                {equipment.certificate_reference || "—"}
+              </strong>
             </div>
           </div>
         </section>
@@ -258,12 +284,15 @@ function EquipmentDetails() {
         {/* LOWER AREA */}
 
         <div className="details-lower">
+
           {/* CALIBRATION CERTIFICATE */}
 
           <section className="record-panel certificates-panel">
             <div className="panel-header">
               <div>
-                <p className="panel-label">DOCUMENT</p>
+                <p className="panel-label">
+                  DOCUMENT
+                </p>
 
                 <h2>Calibration Certificate</h2>
               </div>
@@ -277,10 +306,13 @@ function EquipmentDetails() {
                   </div>
 
                   <div>
-                    <span>Calibration Certificate</span>
+                    <span>
+                      Calibration Certificate
+                    </span>
 
                     <strong>
-                      {equipment.calibration_certificate || "Not uploaded"}
+                      {equipment.calibration_certificate ||
+                        "Not uploaded"}
                     </strong>
                   </div>
                 </div>
@@ -295,7 +327,11 @@ function EquipmentDetails() {
                   {equipment.calibration_certificate && (
                     <button
                       className="view-pdf-btn"
-                      onClick={() => viewPdf(equipment.calibration_certificate)}
+                      onClick={() =>
+                        viewPdf(
+                          equipment.calibration_certificate
+                        )
+                      }
                     >
                       <ExternalLink size={12} />
                       View PDF
@@ -311,7 +347,9 @@ function EquipmentDetails() {
           <section className="record-panel qr-panel">
             <div className="panel-header">
               <div>
-                <p className="panel-label">DIGITAL IDENTITY</p>
+                <p className="panel-label">
+                  DIGITAL IDENTITY
+                </p>
 
                 <h2>Verification QR</h2>
               </div>
@@ -324,13 +362,18 @@ function EquipmentDetails() {
                   alt="Equipment verification QR"
                 />
               ) : (
-                <div className="qr-empty">QR unavailable</div>
+                <div className="qr-empty">
+                  QR unavailable
+                </div>
               )}
 
               <div className="qr-info">
                 <strong>{equipment.id}</strong>
 
-                <p>Scan the QR code to open certificate verification.</p>
+                <p>
+                  Scan the QR code to open certificate
+                  verification.
+                </p>
               </div>
             </div>
           </section>
@@ -341,19 +384,28 @@ function EquipmentDetails() {
         <section className="record-panel hash-panel">
           <div className="panel-header">
             <div>
-              <p className="panel-label">DOCUMENT INTEGRITY</p>
+              <p className="panel-label">
+                DOCUMENT INTEGRITY
+              </p>
 
               <h2>SHA-256 fingerprint</h2>
             </div>
 
-            <span className="integrity-note">Certificate fingerprint</span>
+            <span className="integrity-note">
+              Certificate fingerprint
+            </span>
           </div>
 
           <div className="hash-list">
             <div className="hash-row">
-              <span>Calibration Certificate</span>
+              <span>
+                Calibration Certificate
+              </span>
 
-              <code>{equipment.calibration_hash || "Not available"}</code>
+              <code>
+                {equipment.calibration_hash ||
+                  "Not available"}
+              </code>
             </div>
           </div>
         </section>
@@ -364,7 +416,11 @@ function EquipmentDetails() {
           <div>
             <span>REGISTERED</span>
 
-            <strong>{formatDateTime(equipment.created_at)}</strong>
+            <strong>
+              {formatDateTime(
+                equipment.created_at
+              )}
+            </strong>
           </div>
 
           <div>
@@ -373,6 +429,7 @@ function EquipmentDetails() {
             <strong>{equipment.id}</strong>
           </div>
         </div>
+
       </main>
     </div>
   );

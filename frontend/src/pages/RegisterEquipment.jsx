@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
-import Navbar from "../components/Navbar";
+
+import HospitalNavbar from "../components/HospitalNavbar";
 import "../styles/RegisterEquipment.css";
 
 function RegisterEquipment() {
@@ -34,47 +35,92 @@ function RegisterEquipment() {
     const form = new FormData();
     const inputs = e.target.elements;
 
-    form.append("equipment_name", inputs.equipment_name.value);
+    form.append(
+      "equipment_name",
+      inputs.equipment_name.value
+    );
 
-    form.append("manufacturer", inputs.manufacturer.value);
+    form.append(
+      "manufacturer",
+      inputs.manufacturer.value
+    );
 
-    form.append("model", inputs.model.value);
+    form.append(
+      "model",
+      inputs.model.value
+    );
 
-    form.append("serial_number", inputs.serial_number.value);
+    form.append(
+      "serial_number",
+      inputs.serial_number.value
+    );
 
-    form.append("hospital_name", inputs.hospital_name.value);
+    form.append(
+      "hospital_name",
+      inputs.hospital_name.value
+    );
 
-    form.append("department", inputs.department.value);
+    form.append(
+      "department",
+      inputs.department.value
+    );
 
-    form.append("calibration_date", inputs.calibration_date.value);
+    form.append(
+      "calibration_date",
+      inputs.calibration_date.value
+    );
 
-    form.append("next_calibration_date", inputs.next_calibration_date.value);
+    form.append(
+      "next_calibration_date",
+      inputs.next_calibration_date.value
+    );
 
-    form.append("laboratory_name", inputs.laboratory_name.value);
+    form.append(
+      "laboratory_name",
+      inputs.laboratory_name.value
+    );
 
-    form.append("certificate_reference", inputs.certificate_reference.value);
+    form.append(
+      "certificate_reference",
+      inputs.certificate_reference.value
+    );
 
     if (files.calibration) {
-      form.append("calibration", files.calibration);
+      form.append(
+        "calibration",
+        files.calibration
+      );
     }
 
     if (files.photo) {
-      form.append("photo", files.photo);
+      form.append(
+        "photo",
+        files.photo
+      );
     }
 
     try {
       const response = await axios.post(
         "http://127.0.0.1:5000/api/equipments",
-        form,
+        form
       );
 
-      console.log("Registration response:", response.data);
+      console.log(
+        "Registration response:",
+        response.data
+      );
 
-      setEquipmentId(response.data.equipment.id);
+      setEquipmentId(
+        response.data.equipment.id
+      );
 
-      setEquipmentCode(response.data.equipment.code);
+      setEquipmentCode(
+        response.data.equipment.code
+      );
 
-      setQrCode(response.data.equipment.qr_code);
+      setQrCode(
+        response.data.equipment.qr_code
+      );
 
       setSuccess(true);
 
@@ -82,16 +128,20 @@ function RegisterEquipment() {
         top: 0,
         behavior: "smooth",
       });
+
     } catch (err) {
       console.error(err);
 
       if (err.response?.data?.error) {
-        setError(err.response.data.error);
+        setError(
+          err.response.data.error
+        );
       } else {
         setError(
-          "Could not register equipment. Make sure the backend is running.",
+          "Could not register equipment. Make sure the backend is running."
         );
       }
+
     } finally {
       setLoading(false);
     }
@@ -99,19 +149,25 @@ function RegisterEquipment() {
 
   return (
     <div>
-      <Navbar />
+
+      <HospitalNavbar />
 
       <main className="register-page">
-        {/* =========================================
-            SUCCESS
-        ========================================= */}
+
+        {/* SUCCESS */}
 
         {success && (
           <div className="registration-success">
-            <div className="success-icon">✓</div>
+
+            <div className="success-icon">
+              ✓
+            </div>
 
             <div className="success-content">
-              <h2>Registered Successfully</h2>
+
+              <h2>
+                Registered Successfully
+              </h2>
 
               <p>
                 Equipment and calibration certificate have been securely
@@ -119,59 +175,94 @@ function RegisterEquipment() {
               </p>
 
               <div className="success-details">
+
                 <div className="success-id">
-                  <span>Equipment ID</span>
 
-                  <strong>{equipmentCode}</strong>
+                  <span>
+                    Equipment ID
+                  </span>
 
-                  <small>Database ID: {equipmentId}</small>
+                  <strong>
+                    {equipmentCode}
+                  </strong>
+
+                  <small>
+                    Database ID: {equipmentId}
+                  </small>
+
                 </div>
+
 
                 {qrCode && (
                   <div className="success-qr">
+
                     <img
                       src={`http://127.0.0.1:5000/uploads/${qrCode}`}
                       alt="Equipment QR Code"
                     />
 
-                    <span>Scan to verify equipment</span>
+                    <span>
+                      Scan to verify equipment
+                    </span>
+
                   </div>
                 )}
+
               </div>
+
             </div>
+
           </div>
         )}
 
-        {/* =========================================
-            HEADER
-        ========================================= */}
+
+        {/* HEADER */}
 
         <div className="register-header">
-          <p className="register-eyebrow">EQUIPMENT REGISTRATION</p>
 
-          <h1>Register Equipment</h1>
+          <p className="register-eyebrow">
+            EQUIPMENT REGISTRATION
+          </p>
 
-          <p>Create a secure digital identity for a medical device.</p>
+          <h1>
+            Register Equipment
+          </h1>
+
+          <p>
+            Create a secure digital identity for a medical device.
+          </p>
+
         </div>
 
+
         <form onSubmit={handleSubmit}>
-          {/* =========================================
-              01 MACHINE PROFILE
-          ========================================= */}
+
+          {/* MACHINE PROFILE */}
 
           <section className="register-section">
-            <div className="section-number">01</div>
+
+            <div className="section-number">
+              01
+            </div>
 
             <div className="section-content">
-              <h2>Machine Profile</h2>
+
+              <h2>
+                Machine Profile
+              </h2>
 
               <p className="section-description">
                 Enter the core information manually.
               </p>
 
+
               <div className="form-grid">
+
                 <div className="field">
-                  <label>Equipment / Device Name</label>
+
+                  <label>
+                    Equipment / Device Name
+                  </label>
 
                   <input
                     name="equipment_name"
@@ -179,10 +270,15 @@ function RegisterEquipment() {
                     placeholder="e.g. Patient Monitor"
                     required
                   />
+
                 </div>
 
+
                 <div className="field">
-                  <label>Manufacturer / Make</label>
+
+                  <label>
+                    Manufacturer / Make
+                  </label>
 
                   <input
                     name="manufacturer"
@@ -190,10 +286,15 @@ function RegisterEquipment() {
                     placeholder="e.g. Philips"
                     required
                   />
+
                 </div>
 
+
                 <div className="field">
-                  <label>Model / Type</label>
+
+                  <label>
+                    Model / Type
+                  </label>
 
                   <input
                     name="model"
@@ -201,10 +302,15 @@ function RegisterEquipment() {
                     placeholder="e.g. IntelliVue MX450"
                     required
                   />
+
                 </div>
 
+
                 <div className="field">
-                  <label>Serial Number</label>
+
+                  <label>
+                    Serial Number
+                  </label>
 
                   <input
                     name="serial_number"
@@ -212,10 +318,15 @@ function RegisterEquipment() {
                     placeholder="Enter serial number"
                     required
                   />
+
                 </div>
 
+
                 <div className="field">
-                  <label>Hospital Name</label>
+
+                  <label>
+                    Hospital Name
+                  </label>
 
                   <input
                     name="hospital_name"
@@ -223,10 +334,15 @@ function RegisterEquipment() {
                     placeholder="Issued to hospital"
                     required
                   />
+
                 </div>
 
+
                 <div className="field">
-                  <label>Hospital Department / Location</label>
+
+                  <label>
+                    Hospital Department / Location
+                  </label>
 
                   <input
                     name="department"
@@ -234,22 +350,45 @@ function RegisterEquipment() {
                     placeholder="e.g. ICU"
                     required
                   />
+
                 </div>
 
-                <div className="field">
-                  <label>Date of Calibration</label>
 
-                  <input name="calibration_date" type="date" required />
+                <div className="field">
+
+                  <label>
+                    Date of Calibration
+                  </label>
+
+                  <input
+                    name="calibration_date"
+                    type="date"
+                    required
+                  />
+
                 </div>
 
-                <div className="field">
-                  <label>Next Calibration Due Date</label>
 
-                  <input name="next_calibration_date" type="date" required />
+                <div className="field">
+
+                  <label>
+                    Next Calibration Due Date
+                  </label>
+
+                  <input
+                    name="next_calibration_date"
+                    type="date"
+                    required
+                  />
+
                 </div>
 
+
                 <div className="field">
-                  <label>Issuing Laboratory Name</label>
+
+                  <label>
+                    Issuing Laboratory Name
+                  </label>
 
                   <input
                     name="laboratory_name"
@@ -257,10 +396,15 @@ function RegisterEquipment() {
                     placeholder="Laboratory name"
                     required
                   />
+
                 </div>
 
+
                 <div className="field">
-                  <label>Calibration Certificate Reference</label>
+
+                  <label>
+                    Calibration Certificate Reference
+                  </label>
 
                   <input
                     name="certificate_reference"
@@ -268,35 +412,53 @@ function RegisterEquipment() {
                     placeholder="Certificate reference number"
                     required
                   />
+
                 </div>
+
               </div>
+
             </div>
+
           </section>
 
-          {/* =========================================
-              02 CALIBRATION CERTIFICATE
-          ========================================= */}
+
+          {/* CALIBRATION CERTIFICATE */}
 
           <section className="register-section">
-            <div className="section-number">02</div>
+
+            <div className="section-number">
+              02
+            </div>
 
             <div className="section-content">
-              <h2>Calibration Certificate</h2>
+
+              <h2>
+                Calibration Certificate
+              </h2>
 
               <p className="section-description">
                 Upload the original calibration certificate issued by the
                 laboratory.
               </p>
 
+
               <label className="upload-box">
+
                 <input
                   type="file"
                   accept=".pdf"
                   required
-                  onChange={(e) => handleFile("calibration", e.target.files[0])}
+                  onChange={(e) =>
+                    handleFile(
+                      "calibration",
+                      e.target.files[0]
+                    )
+                  }
                 />
 
-                <div className="upload-icon">↑</div>
+                <div className="upload-icon">
+                  ↑
+                </div>
 
                 <strong>
                   {files.calibration
@@ -304,46 +466,71 @@ function RegisterEquipment() {
                     : "Upload Calibration Certificate"}
                 </strong>
 
-                <span>PDF files only</span>
+                <span>
+                  PDF files only
+                </span>
+
               </label>
+
             </div>
+
           </section>
 
-          {/* =========================================
-              03 EQUIPMENT PHOTO
-          ========================================= */}
+
+          {/* EQUIPMENT PHOTO */}
 
           <section className="register-section">
-            <div className="section-number">03</div>
+
+            <div className="section-number">
+              03
+            </div>
 
             <div className="section-content">
-              <h2>Equipment Photo</h2>
+
+              <h2>
+                Equipment Photo
+              </h2>
 
               <p className="section-description">
                 Add a photo to visually identify the physical machine.
               </p>
 
+
               <label className="upload-box photo-upload">
+
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={(e) => handleFile("photo", e.target.files[0])}
+                  onChange={(e) =>
+                    handleFile(
+                      "photo",
+                      e.target.files[0]
+                    )
+                  }
                 />
 
-                <div className="upload-icon">↑</div>
+                <div className="upload-icon">
+                  ↑
+                </div>
 
                 <strong>
-                  {files.photo ? files.photo.name : "Upload Equipment Photo"}
+                  {files.photo
+                    ? files.photo.name
+                    : "Upload Equipment Photo"}
                 </strong>
 
-                <span>JPG, PNG or WebP</span>
+                <span>
+                  JPG, PNG or WebP
+                </span>
+
               </label>
+
             </div>
+
           </section>
 
-          {/* =========================================
-              ERROR
-          ========================================= */}
+
+          {/* ERROR */}
 
           {error && (
             <div
@@ -360,32 +547,45 @@ function RegisterEquipment() {
             </div>
           )}
 
-          {/* =========================================
-              04 SECURE REGISTRATION
-          ========================================= */}
+
+          {/* SECURE REGISTRATION */}
 
           <section className="secure-registration">
-            <div>
-              <p className="register-eyebrow">04 · SECURE REGISTRATION</p>
 
-              <h2>Ready to create the equipment record?</h2>
+            <div>
+
+              <p className="register-eyebrow">
+                04 · SECURE REGISTRATION
+              </p>
+
+              <h2>
+                Ready to create the equipment record?
+              </h2>
 
               <p>
-                The calibration certificate will be fingerprinted with SHA-256
-                and linked to the equipment record.
+                The calibration certificate will be fingerprinted with
+                SHA-256 and linked to the equipment record.
               </p>
+
             </div>
+
 
             <button
               type="submit"
               className="register-submit-button"
               disabled={loading}
             >
-              {loading ? "Registering..." : "Register Equipment"}
+              {loading
+                ? "Registering..."
+                : "Register Equipment"}
             </button>
+
           </section>
+
         </form>
+
       </main>
+
     </div>
   );
 }
