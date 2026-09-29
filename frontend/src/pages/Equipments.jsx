@@ -19,7 +19,7 @@ function Equipments() {
   const getEquipments = async () => {
     try {
       const response = await axios.get(
-        "http://127.0.0.1:5000/api/equipments"
+        "https://medledger-bms-buildathon.onrender.com/api/equipments"
       );
 
       setEquipments(response.data);
@@ -197,7 +197,7 @@ function Equipments() {
                     {equipment.qr_code ? (
 
                       <img
-                        src={`http://127.0.0.1:5000/uploads/${equipment.qr_code}`}
+                        src={`https://medledger-bms-buildathon.onrender.com/uploads/${equipment.qr_code}`}
                         alt="Equipment QR"
                       />
 

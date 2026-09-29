@@ -39,7 +39,7 @@ function VerifyDocuments() {
       setLoading(true);
       setError("");
 
-      const response = await axios.get("http://127.0.0.1:5000/api/equipments");
+      const response = await axios.get("https://medledger-bms-buildathon.onrender.com/api/equipments");
 
       setEquipments(response.data);
     } catch (err) {
@@ -98,7 +98,7 @@ function VerifyDocuments() {
       formData.append("certificate", certificate);
 
       const response = await axios.post(
-        `http://127.0.0.1:5000/api/verify/${selectedEquipment.id}`,
+        `https://medledger-bms-buildathon.onrender.com/api/verify/${selectedEquipment.id}`,
         formData,
       );
 

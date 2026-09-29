@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import HospitalNavbar from "../components/HospitalNavbar";
 import "../styles/HospitalIssues.css";
 
-const API = "http://127.0.0.1:5000";
+const API = "https://medledger-bms-buildathon.onrender.com";
 
 function HospitalIssues() {
   const [issues, setIssues] = useState([]);

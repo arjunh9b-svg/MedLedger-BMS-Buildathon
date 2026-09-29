@@ -27,7 +27,7 @@ function Inspection() {
 
   const getEquipments = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:5000/api/equipments");
+      const response = await axios.get("https://medledger-bms-buildathon.onrender.com/api/equipments");
 
       setEquipments(response.data);
     } catch (err) {
@@ -127,7 +127,7 @@ function Inspection() {
       form.append("certificate", updateData.certificate);
 
       await axios.put(
-        `http://127.0.0.1:5000/api/equipments/${selectedEquipment.id}/calibration`,
+        `https://medledger-bms-buildathon.onrender.com/api/equipments/${selectedEquipment.id}/calibration`,
 
         form,
       );

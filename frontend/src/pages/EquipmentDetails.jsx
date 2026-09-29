@@ -28,7 +28,7 @@ function EquipmentDetails() {
   const getEquipment = async () => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:5000/api/equipments/${id}`,
+        `https://medledger-bms-buildathon.onrender.com/api/equipments/${id}`,
       );
 
       setEquipment(response.data);
@@ -83,7 +83,7 @@ function EquipmentDetails() {
     if (!filename) return;
 
     window.open(
-      `http://127.0.0.1:5000/uploads/${filename}`,
+      `https://medledger-bms-buildathon.onrender.com/uploads/${filename}`,
       "_blank",
     );
   };
@@ -358,7 +358,7 @@ function EquipmentDetails() {
             <div className="qr-content">
               {equipment.qr_code ? (
                 <img
-                  src={`http://127.0.0.1:5000/uploads/${equipment.qr_code}`}
+                  src={`https://medledger-bms-buildathon.onrender.com/uploads/${equipment.qr_code}`}
                   alt="Equipment verification QR"
                 />
               ) : (

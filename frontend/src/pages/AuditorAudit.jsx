@@ -8,7 +8,7 @@ function AuditorAudit() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch("http://127.0.0.1:5000/api/auditor/dashboard")
+    fetch("https://medledger-bms-buildathon.onrender.com/api/auditor/dashboard")
       .then((res) => {
         if (!res.ok) {
           throw new Error("Failed to load audit data");

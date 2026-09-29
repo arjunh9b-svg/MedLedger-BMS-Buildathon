@@ -17,7 +17,7 @@ function LabEquipments() {
       setError("");
 
       const response = await axios.get(
-        "http://127.0.0.1:5000/api/lab/equipments"
+        "https://medledger-bms-buildathon.onrender.com/api/lab/equipments"
       );
 
       setEquipments(response.data);

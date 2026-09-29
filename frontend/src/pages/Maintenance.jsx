@@ -21,7 +21,7 @@ function Maintenance() {
   const getEquipments = async () => {
     try {
       const response = await axios.get(
-        "http://127.0.0.1:5000/api/equipments"
+        "https://medledger-bms-buildathon.onrender.com/api/equipments"
       );
 
       setEquipments(response.data);

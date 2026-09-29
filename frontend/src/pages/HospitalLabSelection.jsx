@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import HospitalNavbar from "../components/HospitalNavbar";
 import "./HospitalLabSelection.css";
 
-const API = "http://127.0.0.1:5000";
+const API = "https://medledger-bms-buildathon.onrender.com";
 
 function HospitalLabSelection() {
   const [labs, setLabs] = useState([]);

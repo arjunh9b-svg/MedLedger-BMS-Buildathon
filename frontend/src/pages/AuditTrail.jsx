@@ -22,7 +22,7 @@ function AuditTrail() {
 
   const getAudits = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:5000/api/audit");
+      const response = await axios.get("https://medledger-bms-buildathon.onrender.com/api/audit");
 
       setAudits(response.data);
     } catch (err) {

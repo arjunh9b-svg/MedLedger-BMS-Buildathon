@@ -4,7 +4,7 @@ import axios from "axios";
 
 import "../styles/Auditor.css";
 
-const API = "http://127.0.0.1:5000";
+const API = "https://medledger-bms-buildathon.onrender.com";
 
 function AuditorIssues() {
   const navigate = useNavigate();

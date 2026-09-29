@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import HospitalNavbar from "../components/HospitalNavbar";
 import "../styles/HospitalDashboard.css";
 
-const API = "http://127.0.0.1:5000";
+const API = "https://medledger-bms-buildathon.onrender.com";
 
 function HospitalDashboard() {
   const [dashboard, setDashboard] = useState(null);
