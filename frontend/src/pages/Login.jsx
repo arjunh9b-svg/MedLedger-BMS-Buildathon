@@ -12,8 +12,14 @@ function Login({ onLogin }) {
   const handleLogin = (e) => {
     e.preventDefault();
 
-    onLogin();
+    if (!selectedPortal) {
+      return;
+    }
 
+    // Tell App.jsx which portal was selected
+    onLogin(selectedPortal);
+
+    // Navigate to the selected portal
     if (selectedPortal === "hospital") {
       navigate("/hospital");
     } else if (selectedPortal === "lab") {
@@ -25,14 +31,30 @@ function Login({ onLogin }) {
 
   return (
     <main className="login-page">
+
+      {/* ================================================== */}
+      {/* LEFT SIDE */}
+      {/* ================================================== */}
+
       <section className="login-left">
+
         <div className="login-logo">
-          <div className="login-logo-box">M</div>
-          <span>MEDLEDGER</span>
+
+          <div className="login-logo-box">
+            M
+          </div>
+
+          <span>
+            MEDLEDGER
+          </span>
+
         </div>
 
         <div className="login-hero">
-          <p className="login-eyebrow">MEDICAL EQUIPMENT VERIFICATION</p>
+
+          <p className="login-eyebrow">
+            MEDICAL EQUIPMENT VERIFICATION
+          </p>
 
           <h1>
             Trust every
@@ -44,6 +66,7 @@ function Login({ onLogin }) {
             A clean, secure workspace for hospitals to manage equipment,
             certifications, inspections and verification records.
           </p>
+
         </div>
 
         <p className="login-footer">
@@ -51,59 +74,130 @@ function Login({ onLogin }) {
         </p>
 
         <div className="login-curve"></div>
+
       </section>
 
-      <section className="login-right">
-        <div className="login-form-container">
-          <div className="form-heading">
-            <h2>Welcome back</h2>
+      {/* ================================================== */}
+      {/* RIGHT SIDE */}
+      {/* ================================================== */}
 
-            <p>Sign in to access your medical equipment workspace.</p>
+      <section className="login-right">
+
+        <div className="login-form-container">
+
+          <div className="form-heading">
+
+            <h2>
+              Welcome back
+            </h2>
+
+            <p>
+              Sign in to access your medical equipment workspace.
+            </p>
+
           </div>
 
-          {/* Portal Selection */}
+          {/* ================================================== */}
+          {/* PORTAL SELECTION */}
+          {/* ================================================== */}
+
           <div className="form-group">
-            <label>Choose Portal</label>
+
+            <label>
+              Choose Portal
+            </label>
 
             <div className="portal-options">
-              <button
-                type="button"
-                className={`portal-option ${
-                  selectedPortal === "hospital" ? "selected" : ""
-                }`}
-                onClick={() => setSelectedPortal("hospital")}
-              >
-                <strong>Hospital Portal</strong>
-                <span>Manage equipment & maintenance</span>
-              </button>
+
+              {/* HOSPITAL */}
 
               <button
                 type="button"
                 className={`portal-option ${
-                  selectedPortal === "lab" ? "selected" : ""
+                  selectedPortal === "hospital"
+                    ? "selected"
+                    : ""
                 }`}
-                onClick={() => setSelectedPortal("lab")}
+                onClick={() =>
+                  setSelectedPortal("hospital")
+                }
               >
-                <strong>Lab-Tech Portal</strong>
-                <span>Register & manage certificates</span>
+
+                <strong>
+                  Hospital Portal
+                </strong>
+
+                <span>
+                  Manage equipment & maintenance
+                </span>
+
               </button>
+
+              {/* LAB TECH */}
 
               <button
                 type="button"
                 className={`portal-option ${
-                  selectedPortal === "auditor" ? "selected" : ""
+                  selectedPortal === "lab"
+                    ? "selected"
+                    : ""
                 }`}
-                onClick={() => setSelectedPortal("auditor")}
+                onClick={() =>
+                  setSelectedPortal("lab")
+                }
               >
-                <strong>Auditor Portal</strong>
-                <span>Verify & audit certificates</span>
+
+                <strong>
+                  Lab-Tech Portal
+                </strong>
+
+                <span>
+                  Register & manage certificates
+                </span>
+
               </button>
+
+              {/* AUDITOR */}
+
+              <button
+                type="button"
+                className={`portal-option ${
+                  selectedPortal === "auditor"
+                    ? "selected"
+                    : ""
+                }`}
+                onClick={() =>
+                  setSelectedPortal("auditor")
+                }
+              >
+
+                <strong>
+                  Auditor Portal
+                </strong>
+
+                <span>
+                  Verify & audit certificates
+                </span>
+
+              </button>
+
             </div>
+
           </div>
 
+          {/* ================================================== */}
+          {/* LOGIN FORM */}
+          {/* ================================================== */}
+
           <form onSubmit={handleLogin}>
+
+            {/* EMAIL */}
+
             <div className="form-group">
-              <label htmlFor="email">Email</label>
+
+              <label htmlFor="email">
+                Email
+              </label>
 
               <input
                 id="email"
@@ -111,15 +205,26 @@ function Login({ onLogin }) {
                 placeholder="name@hospital.com"
                 required
               />
+
             </div>
 
+            {/* PASSWORD */}
+
             <div className="form-group">
-              <label htmlFor="password">Password</label>
+
+              <label htmlFor="password">
+                Password
+              </label>
 
               <div className="password-wrapper">
+
                 <input
                   id="password"
-                  type={showPassword ? "text" : "password"}
+                  type={
+                    showPassword
+                      ? "text"
+                      : "password"
+                  }
                   placeholder="Enter your password"
                   required
                 />
@@ -127,18 +232,33 @@ function Login({ onLogin }) {
                 <button
                   type="button"
                   className="show-password"
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={() =>
+                    setShowPassword(!showPassword)
+                  }
                 >
-                  {showPassword ? "Hide" : "Show"}
+                  {showPassword
+                    ? "Hide"
+                    : "Show"}
                 </button>
+
               </div>
+
             </div>
 
+            {/* FORGOT PASSWORD */}
+
             <div className="forgot-row">
-              <button type="button" className="forgot-btn">
+
+              <button
+                type="button"
+                className="forgot-btn"
+              >
                 Forgot password?
               </button>
+
             </div>
+
+            {/* SIGN IN */}
 
             <button
               type="submit"
@@ -147,30 +267,52 @@ function Login({ onLogin }) {
             >
               Sign in
             </button>
+
           </form>
 
+          {/* ================================================== */}
+          {/* SOCIAL LOGIN */}
+          {/* ================================================== */}
+
           <div className="continue-divider">
-            <span></span>
-
-            <p>or continue with</p>
 
             <span></span>
+
+            <p>
+              or continue with
+            </p>
+
+            <span></span>
+
           </div>
 
-          <button type="button" className="social-btn">
+          <button
+            type="button"
+            className="social-btn"
+          >
             Continue with Google
           </button>
 
-          <button type="button" className="social-btn">
+          <button
+            type="button"
+            className="social-btn"
+          >
             Continue with Apple
           </button>
 
+          {/* ================================================== */}
+          {/* TERMS */}
+          {/* ================================================== */}
+
           <p className="terms">
-            By continuing, you agree to the MedLedger Terms of Use and Privacy
-            Policy.
+            By continuing, you agree to the MedLedger Terms of
+            Use and Privacy Policy.
           </p>
+
         </div>
+
       </section>
+
     </main>
   );
 }

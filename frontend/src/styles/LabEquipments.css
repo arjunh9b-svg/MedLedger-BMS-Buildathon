@@ -1,0 +1,349 @@
+.lab-equipments-page {
+  min-height: 100vh;
+  background: #f8f5f2;
+  color: #29191f;
+}
+
+/* NAVBAR */
+
+.lab-navbar {
+  height: 90px;
+  background: #3b252d;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  padding: 0 48px;
+  gap: 42px;
+}
+
+.lab-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.lab-logo {
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+  background: #f5e7b3;
+  color: #3b252d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Georgia, serif;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.lab-brand span {
+  font-family: Georgia, serif;
+  font-size: 21px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+.lab-nav {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  flex: 1;
+}
+
+.lab-nav a {
+  color: #ffffff;
+  text-decoration: none;
+  font-family: Georgia, serif;
+  font-size: 16px;
+  padding: 34px 0 28px;
+  border-bottom: 3px solid transparent;
+}
+
+.lab-nav a:hover,
+.lab-nav a.active {
+  border-bottom-color: #f5e7b3;
+}
+
+.lab-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: Georgia, serif;
+  white-space: nowrap;
+}
+
+.lab-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #648d79;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.lab-logout {
+  margin-left: 18px;
+  padding: 10px 18px;
+  border: 1px solid #765761;
+  border-radius: 8px;
+  background: transparent;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.lab-logout:hover {
+  background: #4a3039;
+}
+
+/* CONTENT */
+
+.lab-equipments-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 48px 42px;
+}
+
+.lab-page-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 32px;
+}
+
+.lab-page-heading p {
+  margin: 0 0 8px;
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  color: #648d79;
+  font-weight: bold;
+}
+
+.lab-page-heading h1 {
+  margin: 0;
+  font-family: Georgia, serif;
+  font-size: 42px;
+  font-weight: normal;
+}
+
+.lab-page-heading span {
+  display: block;
+  margin-top: 10px;
+  color: #75666b;
+  font-size: 15px;
+}
+
+/* STATS */
+
+.lab-equipment-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 26px;
+}
+
+.lab-equipment-stat {
+  background: white;
+  border-radius: 14px;
+  padding: 22px 24px;
+  box-shadow: 0 4px 18px rgba(41, 25, 31, 0.06);
+}
+
+.lab-equipment-stat span {
+  display: block;
+  font-size: 13px;
+  color: #806f75;
+  margin-bottom: 8px;
+}
+
+.lab-equipment-stat strong {
+  font-family: Georgia, serif;
+  font-size: 30px;
+  font-weight: normal;
+}
+
+/* REGISTRY */
+
+.lab-equipment-card {
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 4px 18px rgba(41, 25, 31, 0.06);
+  overflow: hidden;
+}
+
+.lab-equipment-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px 24px;
+  border-bottom: 1px solid #eee7e3;
+}
+
+.lab-equipment-card-header p {
+  margin: 0 0 5px;
+  font-size: 12px;
+  letter-spacing: 1.4px;
+  color: #648d79;
+  font-weight: bold;
+}
+
+.lab-equipment-card-header h2 {
+  margin: 0;
+  font-family: Georgia, serif;
+  font-size: 24px;
+  font-weight: normal;
+}
+
+.lab-refresh-btn {
+  padding: 9px 15px;
+  border: 1px solid #d9cdca;
+  border-radius: 7px;
+  background: #fff;
+  color: #3b252d;
+  cursor: pointer;
+}
+
+.lab-refresh-btn:hover {
+  background: #f8f5f2;
+}
+
+/* TABLE */
+
+.lab-equipment-table-wrapper {
+  overflow-x: auto;
+}
+
+.lab-equipment-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.lab-equipment-table th {
+  background: #faf7f4;
+  padding: 14px 18px;
+  text-align: left;
+  font-size: 12px;
+  color: #75666b;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.lab-equipment-table td {
+  padding: 17px 18px;
+  border-top: 1px solid #eee7e3;
+  font-size: 14px;
+}
+
+.lab-equipment-table tbody tr:hover {
+  background: #fcfaf8;
+}
+
+.equipment-code {
+  color: #648d79;
+  font-weight: bold;
+}
+
+.equipment-name {
+  font-weight: bold;
+  color: #29191f;
+}
+
+.equipment-serial {
+  font-family: monospace;
+  font-size: 13px;
+}
+
+.equipment-view-btn {
+  padding: 7px 13px;
+  border: 1px solid #3b252d;
+  border-radius: 6px;
+  background: transparent;
+  color: #3b252d;
+  cursor: pointer;
+}
+
+.equipment-view-btn:hover {
+  background: #3b252d;
+  color: white;
+}
+
+/* STATES */
+
+.lab-empty {
+  padding: 55px 20px;
+  text-align: center;
+  color: #75666b;
+}
+
+.lab-empty strong {
+  display: block;
+  margin-bottom: 6px;
+  color: #29191f;
+}
+
+.lab-error {
+  padding: 35px;
+  text-align: center;
+  color: #9b3d3d;
+}
+
+.lab-loading {
+  padding: 35px;
+  text-align: center;
+  color: #75666b;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 1100px) {
+  .lab-navbar {
+    padding: 0 25px;
+    gap: 25px;
+  }
+
+  .lab-nav {
+    gap: 18px;
+  }
+
+  .lab-nav a {
+    font-size: 14px;
+  }
+
+  .lab-user span {
+    display: none;
+  }
+}
+
+@media (max-width: 800px) {
+  .lab-navbar {
+    height: auto;
+    padding: 18px;
+    flex-wrap: wrap;
+  }
+
+  .lab-nav {
+    order: 3;
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .lab-nav a {
+    padding: 12px 0;
+    white-space: nowrap;
+  }
+
+  .lab-equipments-content {
+    padding: 30px 20px;
+  }
+
+  .lab-page-heading {
+    display: block;
+  }
+  .lab-equipment-stats {
+    grid-template-columns: 1fr;
+  }
+}

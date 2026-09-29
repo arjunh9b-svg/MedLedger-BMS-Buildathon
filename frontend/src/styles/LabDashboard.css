@@ -1,0 +1,573 @@
+.lab-page {
+  min-height: 100vh;
+  background: #f8f5f2;
+  color: #29191f;
+}
+
+/* NAVBAR */
+
+.lab-navbar {
+  height: 68px;
+  background: #3b252d;
+  color: white;
+  display: flex;
+  align-items: center;
+  padding: 0 34px;
+  gap: 35px;
+}
+
+.lab-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.lab-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 7px;
+  background: #f5e7b3;
+  color: #3b252d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Georgia, serif;
+  font-weight: bold;
+}
+
+.lab-brand span {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+}
+
+.lab-nav {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex: 1;
+}
+
+.lab-nav a {
+  color: #d9cdd0;
+  text-decoration: none;
+  font-size: 13px;
+  padding: 24px 0;
+  border-bottom: 2px solid transparent;
+}
+
+.lab-nav a:hover,
+.lab-nav a.active {
+  color: white;
+  border-bottom-color: #f5e7b3;
+}
+
+.lab-user {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.lab-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #648d79;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.lab-logout {
+  margin-left: 12px;
+  border: 1px solid #725963;
+  background: transparent;
+  color: #eee5e7;
+  padding: 7px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+/* CONTENT */
+
+.lab-content {
+  max-width: 1250px;
+  margin: 0 auto;
+  padding: 34px 30px 50px;
+}
+
+.lab-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+
+.lab-heading p {
+  margin: 0 0 6px;
+  color: #648d79;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+}
+
+.lab-heading h1 {
+  margin: 0;
+  font-family: Georgia, serif;
+  font-size: 30px;
+  font-weight: 500;
+}
+
+.lab-heading span {
+  display: block;
+  margin-top: 7px;
+  color: #756970;
+  font-size: 13px;
+}
+
+.lab-register-btn {
+  border: none;
+  background: #3b252d;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+/* TECHNICIAN OVERVIEW */
+
+.technician-overview {
+  background: white;
+  border-radius: 14px;
+  padding: 22px;
+  margin-bottom: 18px;
+  box-shadow: 0 3px 15px rgba(59, 37, 45, 0.06);
+}
+
+.technician-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #eee8e5;
+}
+
+.technician-header p {
+  margin: 0 0 5px;
+  color: #648d79;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+}
+
+.technician-header h2 {
+  margin: 0;
+  font-family: Georgia, serif;
+  font-size: 22px;
+  font-weight: 500;
+}
+
+.technician-header span {
+  display: block;
+  margin-top: 6px;
+  color: #807479;
+  font-size: 12px;
+}
+
+.technician-badge {
+  background: #f5e7b3;
+  color: #3b252d;
+  border-radius: 20px;
+  padding: 7px 12px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.technician-stats {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1px;
+  margin-top: 18px;
+  background: #eee8e5;
+}
+
+.technician-stat {
+  background: white;
+  padding: 14px 15px;
+}
+
+.technician-stat span {
+  display: block;
+  color: #766b70;
+  font-size: 10px;
+  line-height: 1.4;
+  min-height: 28px;
+}
+
+.technician-stat strong {
+  display: block;
+  margin-top: 6px;
+  font-family: Georgia, serif;
+  font-size: 25px;
+  font-weight: 500;
+}
+
+.pending-number {
+  color: #a57938;
+}
+
+.verified-number {
+  color: #648d79;
+}
+
+.issue-number {
+  color: #9b5a5a;
+}
+
+/* MAIN GRID */
+
+.lab-main-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 18px;
+}
+
+.lab-card {
+  background: white;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 3px 15px rgba(59, 37, 45, 0.06);
+}
+
+.lab-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 13px;
+  border-bottom: 1px solid #eee8e5;
+}
+
+.lab-card-header p {
+  margin: 0 0 5px;
+  color: #648d79;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.3px;
+}
+
+.lab-card-header h2 {
+  margin: 0;
+  font-family: Georgia, serif;
+  font-size: 19px;
+  font-weight: 500;
+}
+
+.lab-card-header button {
+  border: none;
+  background: transparent;
+  color: #648d79;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+/* WORKFLOW */
+
+.workflow {
+  padding-top: 9px;
+}
+
+.workflow-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+}
+
+.workflow-icon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: #f1e8e4;
+  color: #3b252d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.workflow-icon.pending {
+  background: #f5e7b3;
+}
+
+.workflow-icon.verified {
+  background: #dcebe3;
+  color: #648d79;
+}
+
+.workflow-item div:nth-child(2) {
+  flex: 1;
+}
+
+.workflow-item strong {
+  display: block;
+  font-size: 12px;
+}
+
+.workflow-item span {
+  display: block;
+  margin-top: 3px;
+  color: #8a7d82;
+  font-size: 10px;
+}
+
+.workflow-item b {
+  font-family: Georgia, serif;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.workflow-line {
+  width: 1px;
+  height: 10px;
+  margin-left: 15px;
+  background: #ddd4d1;
+}
+
+/* RECENT CERTIFICATES */
+
+.recent-certificates {
+  padding-top: 5px;
+}
+
+.recent-certificate {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 0;
+  border-bottom: 1px solid #eee8e5;
+}
+
+.recent-certificate:last-child {
+  border-bottom: none;
+}
+
+.recent-certificate strong {
+  display: block;
+  font-size: 12px;
+}
+
+.recent-certificate span {
+  display: block;
+  margin-top: 4px;
+  color: #85797e;
+  font-size: 10px;
+}
+
+.certificate-status {
+  display: inline-block !important;
+  padding: 5px 8px;
+  border-radius: 12px;
+  font-size: 9px !important;
+  font-weight: 700;
+}
+
+.certificate-status.approved {
+  background: #dcebe3;
+  color: #4f7965;
+}
+
+.certificate-status.pending {
+  background: #f5e7b3;
+  color: #80692d;
+}
+
+/* EMPTY */
+
+.lab-empty {
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 6px;
+}
+
+.lab-empty-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #f1e8e4;
+  color: #3b252d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Georgia, serif;
+  font-weight: bold;
+}
+
+.lab-empty strong {
+  font-size: 12px;
+}
+
+.lab-empty span {
+  color: #8a7d82;
+  font-size: 10px;
+}
+
+/* INTEGRITY */
+
+.integrity-panel {
+  margin-top: 18px;
+  padding: 20px 22px;
+  background: #3b252d;
+  border-radius: 14px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+}
+
+.integrity-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.integrity-icon {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 9px;
+  background: #f5e7b3;
+  color: #3b252d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Georgia, serif;
+  font-weight: bold;
+}
+
+.integrity-left p {
+  margin: 0 0 5px;
+  color: #f5e7b3;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.3px;
+}
+
+.integrity-left h2 {
+  margin: 0;
+  font-family: Georgia, serif;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.integrity-left span {
+  display: block;
+  margin-top: 4px;
+  color: #d6c8cc;
+  font-size: 10px;
+}
+
+.integrity-flow {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.integrity-flow div {
+  text-align: center;
+}
+
+.integrity-flow strong {
+  display: block;
+  font-size: 10px;
+}
+
+.integrity-flow span {
+  display: block;
+  margin-top: 3px;
+  color: #cbbdc1;
+  font-size: 9px;
+}
+
+.integrity-flow b {
+  color: #f5e7b3;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 1050px) {
+  .lab-nav {
+    gap: 13px;
+  }
+
+  .lab-nav a {
+    font-size: 11px;
+  }
+
+  .technician-stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .lab-main-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 800px) {
+  .lab-navbar {
+    padding: 0 20px;
+  }
+
+  .lab-nav {
+    display: none;
+  }
+
+  .integrity-panel {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 600px) {
+  .lab-content {
+    padding: 25px 16px;
+  }
+
+  .lab-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .technician-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .technician-header {
+    gap: 12px;
+  }
+
+  .integrity-flow {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .lab-user span {
+    display: none;
+  }
+}

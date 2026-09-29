@@ -1,43 +1,15 @@
+from flask import Flask, request, jsonify, send_from_directory
+from flask_cors import CORS
+from flask_sqlalchemy import SQLAlchemy
+from werkzeug.utils import secure_filename
+
 import os
 import hashlib
 import uuid
-from datetime import datetime, date
-
-import qrcode
-
-from flask import Flask, jsonify, request, send_from_directory
-from flask_cors import CORS
-from werkzeug.utils import secure_filename
-from dotenv import load_dotenv
-from sqlalchemy import text
-
-from extensions import db
-
-load_dotenv()
-
-# ============================================================
-# APP CONFIGURATION
-# ============================================================
-
-app = Flask(__name__)
-
-CORS(app)
-
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
-    "DATABASE_URL",
-    "postgresql+pg8000://postgres:Dravid%4015@localhost:5432/medledger"
-)
-
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
-db.init_app(app)
-
-
-# ============================================================
-# MODELS
-# ============================================================
+from datetime import datetime
 
 from models import (
+    db,
     User,
     Laboratory,
     Equipment,
@@ -45,136 +17,56 @@ from models import (
     VerificationEvent,
     Issue,
     IssueStatusEvent,
-    AuditTrail,
+    AuditTrail
 )
 
 
 # ============================================================
-# DIRECTORIES
+# APP CONFIG
 # ============================================================
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+app = Flask(__name__)
 
-UPLOAD_DIR = os.path.join(
-    BASE_DIR,
+CORS(app)
+
+
+DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    "postgresql+pg8000://postgres:Dravid%4015@localhost:5432/medledger"
+)
+
+app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+UPLOAD_FOLDER = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
     "uploads"
 )
 
-CERTIFICATE_DIR = os.path.join(
-    UPLOAD_DIR,
-    "certificates"
-)
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-PHOTO_DIR = os.path.join(
-    UPLOAD_DIR,
-    "photos"
-)
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
-QR_DIR = os.path.join(
-    UPLOAD_DIR,
-    "qr"
-)
 
-os.makedirs(
-    CERTIFICATE_DIR,
-    exist_ok=True
-)
-
-os.makedirs(
-    PHOTO_DIR,
-    exist_ok=True
-)
-
-os.makedirs(
-    QR_DIR,
-    exist_ok=True
-)
+db.init_app(app)
 
 
 # ============================================================
-# FRONTEND URL
+# HEALTH
 # ============================================================
 
-FRONTEND_BASE_URL = os.getenv(
-    "FRONTEND_BASE_URL",
-    "http://localhost:5173"
-)
+@app.get("/")
+def home():
+    return jsonify({
+        "message": "MedLedger Backend Running",
+        "mst_connected": False
+    })
 
 
-# ============================================================
-# HELPERS
-# ============================================================
-
-def calculate_sha256(file_path):
-    sha256 = hashlib.sha256()
-
-    with open(file_path, "rb") as file:
-        for chunk in iter(
-            lambda: file.read(8192),
-            b""
-        ):
-            sha256.update(chunk)
-
-    return sha256.hexdigest()
-
-
-def calculate_uploaded_sha256(file):
-    sha256 = hashlib.sha256()
-
-    while True:
-        chunk = file.stream.read(8192)
-
-        if not chunk:
-            break
-
-        sha256.update(chunk)
-
-    return sha256.hexdigest()
-
-
-def parse_date(value):
-    if not value:
-        return None
-
-    try:
-        return datetime.strptime(
-            value,
-            "%Y-%m-%d"
-        ).date()
-
-    except ValueError:
-        return None
-
-
-def next_equipment_code():
-    latest = (
-        Equipment.query
-        .order_by(
-            Equipment.id.desc()
-        )
-        .first()
-    )
-
-    if not latest:
-        return "EQ-00001"
-
-    return f"EQ-{latest.id + 1:05d}"
-
-
-# ============================================================
-# HEALTH CHECK
-# ============================================================
-
-@app.route(
-    "/api/health",
-    methods=["GET"]
-)
+@app.get("/api/health")
 def health():
-
     try:
-        db.session.execute(
-            text("SELECT 1")
-        )
+        db.session.execute(db.text("SELECT 1"))
 
         return jsonify({
             "status": "ok",
@@ -182,1646 +74,1063 @@ def health():
         })
 
     except Exception as e:
-
         return jsonify({
             "status": "error",
-            "database": "not connected",
-            "message": str(e)
+            "database": "disconnected",
+            "error": str(e)
         }), 500
 
 
 # ============================================================
-# UPLOADED FILES
+# FILE SERVING
 # ============================================================
 
-@app.route(
-    "/uploads/<path:filename>",
-    methods=["GET"]
-)
+@app.get("/uploads/<path:filename>")
 def uploaded_file(filename):
-
     return send_from_directory(
-        UPLOAD_DIR,
+        app.config["UPLOAD_FOLDER"],
         filename
     )
 
 
 # ============================================================
-# REGISTER EQUIPMENT
+# EQUIPMENT - REGISTER
 # ============================================================
 
-@app.route(
-    "/api/equipments",
-    methods=["POST"]
-)
-def register_equipment():
-
-    equipment_name = request.form.get(
-        "equipment_name"
-    )
-
-    manufacturer = request.form.get(
-        "manufacturer"
-    )
-
-    model = request.form.get(
-        "model"
-    )
-
-    serial_number = request.form.get(
-        "serial_number"
-    )
-
-    hospital_name = request.form.get(
-        "hospital_name"
-    )
-
-    department = request.form.get(
-        "department"
-    )
-
-    calibration_date = parse_date(
-        request.form.get(
-            "calibration_date"
-        )
-    )
-
-    next_calibration_date = parse_date(
-        request.form.get(
-            "next_calibration_date"
-        )
-    )
-
-    laboratory_name = request.form.get(
-        "laboratory_name"
-    )
-
-    certificate_reference = request.form.get(
-        "certificate_reference"
-    )
-
-    certificate_file = request.files.get(
-        "calibration_certificate"
-    )
-
-    photo_file = request.files.get(
-        "photo"
-    )
-
-    # --------------------------------------------------------
-    # VALIDATION
-    # --------------------------------------------------------
-
-    if not equipment_name:
-        return jsonify({
-            "error": "Equipment name is required"
-        }), 400
-
-    if not serial_number:
-        return jsonify({
-            "error": "Serial number is required"
-        }), 400
-
-    if not hospital_name:
-        return jsonify({
-            "error": "Hospital name is required"
-        }), 400
-
-    if not laboratory_name:
-        return jsonify({
-            "error": "Laboratory name is required"
-        }), 400
-
-    if not certificate_file:
-        return jsonify({
-            "error": "Calibration certificate is required"
-        }), 400
-
-    if not photo_file:
-        return jsonify({
-            "error": "Equipment photo is required"
-        }), 400
-
-    if not certificate_file.filename.lower().endswith(
-        ".pdf"
-    ):
-        return jsonify({
-            "error": "Calibration certificate must be a PDF"
-        }), 400
-
-    # --------------------------------------------------------
-    # SERIAL NUMBER CHECK
-    # --------------------------------------------------------
-
-    existing = (
-        Equipment.query
-        .filter_by(
-            serial_number=serial_number
-        )
-        .first()
-    )
-
-    if existing:
-
-        return jsonify({
-            "error": "Serial number already exists"
-        }), 409
-
-    # --------------------------------------------------------
-    # LABORATORY
-    # --------------------------------------------------------
-
-    laboratory = (
-        Laboratory.query
-        .filter_by(
-            name=laboratory_name
-        )
-        .first()
-    )
-
-    if not laboratory:
-
-        laboratory = Laboratory(
-            name=laboratory_name,
-            accreditation_status="ACTIVE",
-            is_recognized=True
-        )
-
-        db.session.add(
-            laboratory
-        )
-
-        db.session.flush()
-
-    # --------------------------------------------------------
-    # EQUIPMENT
-    # --------------------------------------------------------
-
-    equipment = Equipment(
-        code=next_equipment_code(),
-
-        name=equipment_name,
-
-        manufacturer=manufacturer,
-
-        model=model,
-
-        serial_number=serial_number,
-
-        hospital=hospital_name,
-
-        department=department,
-
-        laboratory_id=laboratory.id,
-
-        calibration_date=calibration_date,
-
-        next_calibration_date=next_calibration_date,
-
-        inspection_state="IDLE"
-    )
-
-    db.session.add(
-        equipment
-    )
-
-    db.session.flush()
-
-    # --------------------------------------------------------
-    # CERTIFICATE FILE
-    # --------------------------------------------------------
-
-    certificate_original_name = secure_filename(
-        certificate_file.filename
-    )
-
-    certificate_filename = (
-        f"{uuid.uuid4().hex}_"
-        f"{certificate_original_name}"
-    )
-
-    certificate_path = os.path.join(
-        CERTIFICATE_DIR,
-        certificate_filename
-    )
-
-    certificate_file.save(
-        certificate_path
-    )
-
-    certificate_hash = calculate_sha256(
-        certificate_path
-    )
-
-    certificate_relative_path = (
-        f"certificates/"
-        f"{certificate_filename}"
-    )
-
-    # --------------------------------------------------------
-    # EQUIPMENT PHOTO
-    # --------------------------------------------------------
-
-    photo_original_name = secure_filename(
-        photo_file.filename
-    )
-
-    photo_filename = (
-        f"{uuid.uuid4().hex}_"
-        f"{photo_original_name}"
-    )
-
-    photo_path = os.path.join(
-        PHOTO_DIR,
-        photo_filename
-    )
-
-    photo_file.save(
-        photo_path
-    )
-
-    photo_relative_path = (
-        f"photos/"
-        f"{photo_filename}"
-    )
-
-    # --------------------------------------------------------
-    # QR CODE
-    # --------------------------------------------------------
-
-    qr_filename = (
-        f"{equipment.code}.png"
-    )
-
-    qr_path = os.path.join(
-        QR_DIR,
-        qr_filename
-    )
-
-    verification_url = (
-        f"{FRONTEND_BASE_URL}"
-        f"/scan/{equipment.id}"
-    )
-
-    qr = qrcode.make(
-        verification_url
-    )
-
-    qr.save(
-        qr_path
-    )
-
-    qr_relative_path = (
-        f"qr/{qr_filename}"
-    )
-
-    equipment.photo = (
-        photo_relative_path
-    )
-
-    equipment.qr_code = (
-        qr_relative_path
-    )
-
-    # --------------------------------------------------------
-    # CERTIFICATE DATABASE RECORD
-    # --------------------------------------------------------
-
-    certificate = Certificate(
-
-        certificate_number=(
-            certificate_reference
-        ),
-
-        equipment_id=(
-            equipment.id
-        ),
-
-        laboratory_id=(
-            laboratory.id
-        ),
-
-        version_number=1,
-
-        file_path=(
-            certificate_relative_path
-        ),
-
-        file_name=(
-            certificate_original_name
-        ),
-
-        sha256_hash=(
-            certificate_hash
-        ),
-
-        calibration_date=(
-            calibration_date
-        ),
-
-        next_calibration_date=(
-            next_calibration_date
-        ),
-
-        calibration_result="PENDING",
-
-        status="PENDING_APPROVAL"
-    )
-
-    db.session.add(
-        certificate
-    )
-
-    # --------------------------------------------------------
-    # SAVE
-    # --------------------------------------------------------
+@app.post("/api/equipments")
+def create_equipment():
 
     try:
 
+        data = request.form
+
+        name = data.get("name")
+        manufacturer = data.get("manufacturer")
+        model = data.get("model")
+        serial_number = data.get("serial_number")
+        hospital = data.get("hospital")
+        department = data.get("department")
+        laboratory_id = data.get("laboratory_id")
+        calibration_date = data.get("calibration_date")
+        next_calibration_date = data.get(
+            "next_calibration_date"
+        )
+
+        if not name:
+            return jsonify({
+                "error": "Equipment name is required"
+            }), 400
+
+        if not serial_number:
+            return jsonify({
+                "error": "Serial number is required"
+            }), 400
+
+        existing = Equipment.query.filter_by(
+            serial_number=serial_number
+        ).first()
+
+        if existing:
+            return jsonify({
+                "error": "Equipment with this serial number already exists"
+            }), 409
+
+        # Generate equipment code
+        last_equipment = (
+            Equipment.query
+            .order_by(Equipment.id.desc())
+            .first()
+        )
+
+        next_number = (
+            last_equipment.id + 1
+            if last_equipment
+            else 1
+        )
+
+        code = f"EQ-{next_number:05d}"
+
+        equipment = Equipment(
+            code=code,
+            name=name,
+            manufacturer=manufacturer,
+            model=model,
+            serial_number=serial_number,
+            hospital=hospital,
+            department=department,
+            laboratory_id=(
+                int(laboratory_id)
+                if laboratory_id
+                else None
+            ),
+            calibration_date=calibration_date,
+            next_calibration_date=next_calibration_date,
+            created_at=datetime.utcnow()
+        )
+
+        db.session.add(equipment)
         db.session.commit()
+
+        return jsonify({
+            "message": "Equipment registered successfully",
+            "equipment": {
+                "id": equipment.id,
+                "code": equipment.code,
+                "name": equipment.name,
+                "manufacturer": equipment.manufacturer,
+                "model": equipment.model,
+                "serial_number": equipment.serial_number,
+                "hospital": equipment.hospital,
+                "department": equipment.department
+            }
+        }), 201
 
     except Exception as e:
 
         db.session.rollback()
 
         return jsonify({
-            "error": "Failed to register equipment",
-            "message": str(e)
+            "error": str(e)
         }), 500
 
-    # --------------------------------------------------------
-    # RESPONSE
-    # --------------------------------------------------------
-
-    return jsonify({
-
-        "message":
-            "Equipment registered successfully",
-
-        "equipment": {
-
-            "id":
-                equipment.id,
-
-            "code":
-                equipment.code,
-
-            "equipment_name":
-                equipment.name,
-
-            "manufacturer":
-                equipment.manufacturer,
-
-            "model":
-                equipment.model,
-
-            "serial_number":
-                equipment.serial_number,
-
-            "hospital":
-                equipment.hospital,
-
-            "department":
-                equipment.department,
-
-            "calibration_date":
-                (
-                    equipment.calibration_date.isoformat()
-                    if equipment.calibration_date
-                    else None
-                ),
-
-            "next_calibration_date":
-                (
-                    equipment.next_calibration_date.isoformat()
-                    if equipment.next_calibration_date
-                    else None
-                ),
-
-            "photo":
-                equipment.photo,
-
-            "qr_code":
-                equipment.qr_code
-        },
-
-        "certificate": {
-
-            "id":
-                certificate.id,
-
-            "certificate_reference":
-                certificate.certificate_number,
-
-            "file_name":
-                certificate.file_name,
-
-            "sha256_hash":
-                certificate.sha256_hash,
-
-            "status":
-                certificate.status
-        },
-
-        "qr_url":
-            verification_url
-
-    }), 201
-
 
 # ============================================================
-# GET EQUIPMENT
+# EQUIPMENT - GET ALL
 # ============================================================
 
-@app.route(
-    "/api/equipments",
-    methods=["GET"]
-)
+@app.get("/api/equipments")
 def get_equipments():
 
-    equipments = (
-        Equipment.query
-        .order_by(
-            Equipment.id.desc()
+    try:
+
+        equipments = (
+            Equipment.query
+            .order_by(Equipment.id.desc())
+            .all()
         )
-        .all()
-    )
 
-    return jsonify([
+        result = []
 
-        {
+        for equipment in equipments:
 
-            "id":
-                equipment.id,
-
-            "code":
-                equipment.code,
-
-            "equipment_name":
-                equipment.name,
-
-            "manufacturer":
-                equipment.manufacturer,
-
-            "model":
-                equipment.model,
-
-            "serial_number":
-                equipment.serial_number,
-
-            "hospital":
-                equipment.hospital,
-
-            "department":
-                equipment.department,
-
-            "inspection_state":
-                equipment.inspection_state,
-
-            "calibration_date":
-                (
-                    equipment.calibration_date.isoformat()
-                    if equipment.calibration_date
-                    else None
+            result.append({
+                "id": equipment.id,
+                "code": equipment.code,
+                "name": equipment.name,
+                "manufacturer": equipment.manufacturer,
+                "model": equipment.model,
+                "serial_number": equipment.serial_number,
+                "hospital": equipment.hospital,
+                "department": equipment.department,
+                "laboratory_id": equipment.laboratory_id,
+                "calibration_date": (
+                    equipment.calibration_date
+                    if isinstance(
+                        equipment.calibration_date,
+                        str
+                    )
+                    else (
+                        equipment.calibration_date.isoformat()
+                        if equipment.calibration_date
+                        else None
+                    )
                 ),
-
-            "next_calibration_date":
-                (
-                    equipment.next_calibration_date.isoformat()
-                    if equipment.next_calibration_date
-                    else None
+                "next_calibration_date": (
+                    equipment.next_calibration_date
+                    if isinstance(
+                        equipment.next_calibration_date,
+                        str
+                    )
+                    else (
+                        equipment.next_calibration_date.isoformat()
+                        if equipment.next_calibration_date
+                        else None
+                    )
                 ),
+                "inspection_state": equipment.inspection_state,
+                "created_at": (
+                    equipment.created_at.isoformat()
+                    if equipment.created_at
+                    else None
+                )
+            })
 
-            "photo":
-                equipment.photo,
+        return jsonify(result)
 
-            "qr_code":
-                equipment.qr_code
-
-        }
-
-        for equipment in equipments
-
-    ])
-
-
-# ============================================================
-# GET SINGLE EQUIPMENT
-# ============================================================
-
-@app.route(
-    "/api/equipments/<int:equipment_id>",
-    methods=["GET"]
-)
-def get_equipment_by_id(equipment_id):
-
-    equipment = db.session.get(
-        Equipment,
-        equipment_id
-    )
-
-    if not equipment:
+    except Exception as e:
 
         return jsonify({
-            "error": "Equipment not found"
-        }), 404
-
-    certificate = (
-        Certificate.query
-        .filter_by(
-            equipment_id=equipment.id
-        )
-        .order_by(
-            Certificate.version_number.desc()
-        )
-        .first()
-    )
-
-    laboratory = None
-
-    if certificate:
-
-        laboratory = db.session.get(
-            Laboratory,
-            certificate.laboratory_id
-        )
-
-    return jsonify({
-
-        "id":
-            equipment.id,
-
-        "code":
-            equipment.code,
-
-        "equipment_name":
-            equipment.name,
-
-        "manufacturer":
-            equipment.manufacturer,
-
-        "model":
-            equipment.model,
-
-        "serial_number":
-            equipment.serial_number,
-
-        "hospital":
-            equipment.hospital,
-
-        "department":
-            equipment.department,
-
-        "calibration_date":
-            (
-                equipment.calibration_date.isoformat()
-                if equipment.calibration_date
-                else None
-            ),
-
-        "next_calibration_date":
-            (
-                equipment.next_calibration_date.isoformat()
-                if equipment.next_calibration_date
-                else None
-            ),
-
-        "certificate_reference":
-            (
-                certificate.certificate_number
-                if certificate
-                else None
-            ),
-
-        "calibration_certificate":
-            (
-                certificate.file_path
-                if certificate
-                else None
-            ),
-
-        "calibration_hash":
-            (
-                certificate.sha256_hash
-                if certificate
-                else None
-            ),
-
-        "certificate_status":
-            (
-                certificate.status
-                if certificate
-                else None
-            ),
-
-        "certificate_result":
-            (
-                certificate.calibration_result
-                if certificate
-                else None
-            ),
-
-        "certificate_version":
-            (
-                certificate.version_number
-                if certificate
-                else None
-            ),
-
-        "certificate_file_name":
-            (
-                certificate.file_name
-                if certificate
-                else None
-            ),
-
-        "laboratory_name":
-            (
-                laboratory.name
-                if laboratory
-                else None
-            ),
-
-        "laboratory_accreditation_number":
-            (
-                laboratory.accreditation_number
-                if laboratory
-                else None
-            ),
-
-        "laboratory_accreditation_status":
-            (
-                laboratory.accreditation_status
-                if laboratory
-                else None
-            ),
-
-        "photo":
-            equipment.photo,
-
-        "qr_code":
-            equipment.qr_code,
-
-        "inspection_state":
-            equipment.inspection_state,
-
-        "inspection_started_at":
-            (
-                equipment.inspection_started_at.isoformat()
-                if equipment.inspection_started_at
-                else None
-            ),
-
-        "created_at":
-            (
-                equipment.created_at.isoformat()
-                if equipment.created_at
-                else None
-            ),
-
-        "certificate_registered_at":
-            (
-                certificate.registered_at.isoformat()
-                if certificate
-                and certificate.registered_at
-                else None
-            ),
-
-        "blockchain_tx":
-            (
-                certificate.blockchain_tx
-                if certificate
-                else None
-            ),
-
-        "blockchain_timestamp":
-            (
-                certificate.blockchain_timestamp.isoformat()
-                if certificate
-                and certificate.blockchain_timestamp
-                else None
-            )
-    })
+            "error": str(e)
+        }), 500
 
 
 # ============================================================
-# LEGACY EQUIPMENT ENDPOINT
+# EQUIPMENT - SINGLE
 # ============================================================
 
-@app.route(
-    "/api/equipment",
-    methods=["GET"]
-)
-def get_equipment_legacy():
+@app.get("/api/equipments/<int:equipment_id>")
+def get_equipment(equipment_id):
 
-    equipments = (
-        Equipment.query
-        .order_by(
-            Equipment.id.desc()
+    try:
+
+        equipment = Equipment.query.get(
+            equipment_id
         )
-        .all()
-    )
 
-    return jsonify([
+        if not equipment:
+            return jsonify({
+                "error": "Equipment not found"
+            }), 404
 
-        {
-
-            "id":
-                equipment.id,
-
-            "code":
-                equipment.code,
-
-            "name":
-                equipment.name,
-
-            "manufacturer":
-                equipment.manufacturer,
-
-            "model":
-                equipment.model,
-
-            "serial_number":
-                equipment.serial_number,
-
-            "hospital":
-                equipment.hospital,
-
-            "department":
-                equipment.department,
-
-            "inspection_state":
-                equipment.inspection_state,
-
-            "calibration_date":
-                (
+        return jsonify({
+            "id": equipment.id,
+            "code": equipment.code,
+            "name": equipment.name,
+            "manufacturer": equipment.manufacturer,
+            "model": equipment.model,
+            "serial_number": equipment.serial_number,
+            "hospital": equipment.hospital,
+            "department": equipment.department,
+            "laboratory_id": equipment.laboratory_id,
+            "calibration_date": (
+                equipment.calibration_date
+                if isinstance(
+                    equipment.calibration_date,
+                    str
+                )
+                else (
                     equipment.calibration_date.isoformat()
                     if equipment.calibration_date
                     else None
-                ),
-
-            "next_calibration_date":
-                (
+                )
+            ),
+            "next_calibration_date": (
+                equipment.next_calibration_date
+                if isinstance(
+                    equipment.next_calibration_date,
+                    str
+                )
+                else (
                     equipment.next_calibration_date.isoformat()
                     if equipment.next_calibration_date
                     else None
                 )
-        }
+            ),
+            "inspection_state": equipment.inspection_state,
+            "created_at": (
+                equipment.created_at.isoformat()
+                if equipment.created_at
+                else None
+            )
+        })
 
-        for equipment in equipments
+    except Exception as e:
 
-    ])
+        return jsonify({
+            "error": str(e)
+        }), 500
+
+
+# ============================================================
+# LEGACY EQUIPMENT ROUTE
+# ============================================================
+
+@app.get("/api/equipment")
+def legacy_equipment():
+
+    return get_equipments()
 
 
 # ============================================================
 # LABORATORIES
 # ============================================================
 
-@app.route(
-    "/api/laboratories",
-    methods=["GET"]
-)
+@app.get("/api/laboratories")
 def get_laboratories():
 
-    laboratories = (
-        Laboratory.query
-        .order_by(
-            Laboratory.id.desc()
+    try:
+
+        laboratories = (
+            Laboratory.query
+            .order_by(Laboratory.id.desc())
+            .all()
         )
-        .all()
-    )
 
-    return jsonify([
+        result = []
 
-        {
+        for lab in laboratories:
 
-            "id":
-                laboratory.id,
+            result.append({
+                "id": lab.id,
+                "name": lab.name,
+                "accreditation_number":
+                    lab.accreditation_number,
+                "accreditation_status":
+                    lab.accreditation_status,
+                "is_recognized":
+                    lab.is_recognized,
+                "user_id": lab.user_id
+            })
 
-            "name":
-                laboratory.name,
+        return jsonify(result)
 
-            "accreditation_number":
-                laboratory.accreditation_number,
+    except Exception as e:
 
-            "accreditation_status":
-                laboratory.accreditation_status,
-
-            "is_recognized":
-                laboratory.is_recognized,
-
-            "user_id":
-                laboratory.user_id
-
-        }
-
-        for laboratory in laboratories
-
-    ])
+        return jsonify({
+            "error": str(e)
+        }), 500
 
 
-@app.route(
-    "/api/laboratories",
-    methods=["POST"]
-)
+@app.post("/api/laboratories")
 def create_laboratory():
 
-    data = request.get_json()
+    try:
 
-    if not data:
+        data = request.get_json() or {}
 
-        return jsonify({
-            "error": "Request body must be JSON"
-        }), 400
-
-    if not data.get("name"):
-
-        return jsonify({
-            "error": "name is required"
-        }), 400
-
-    accreditation_number = (
-        data.get(
+        name = data.get("name")
+        accreditation_number = data.get(
             "accreditation_number"
         )
-    )
 
-    if accreditation_number:
-
-        existing = (
-            Laboratory.query
-            .filter_by(
-                accreditation_number=(
-                    accreditation_number
-                )
-            )
-            .first()
-        )
-
-        if existing:
-
+        if not name:
             return jsonify({
-                "error":
-                    "Accreditation number already exists"
-            }), 409
+                "error": "Laboratory name is required"
+            }), 400
 
-    laboratory = Laboratory(
-
-        name=data["name"],
-
-        accreditation_number=(
-            accreditation_number
-        ),
-
-        accreditation_status=(
-            data.get(
-                "accreditation_status"
-            )
-        ),
-
-        is_recognized=(
-            data.get(
-                "is_recognized",
-                False
-            )
-        ),
-
-        user_id=data.get(
-            "user_id"
-        )
-    )
-
-    try:
-
-        db.session.add(
-            laboratory
+        laboratory = Laboratory(
+            name=name,
+            accreditation_number=
+                accreditation_number,
+            accreditation_status=
+                data.get(
+                    "accreditation_status",
+                    "ACTIVE"
+                ),
+            is_recognized=
+                data.get(
+                    "is_recognized",
+                    False
+                ),
+            user_id=data.get("user_id"),
+            created_at=datetime.utcnow()
         )
 
+        db.session.add(laboratory)
         db.session.commit()
+
+        return jsonify({
+            "message": "Laboratory created successfully",
+            "laboratory": {
+                "id": laboratory.id,
+                "name": laboratory.name,
+                "accreditation_number":
+                    laboratory.accreditation_number
+            }
+        }), 201
 
     except Exception as e:
 
         db.session.rollback()
 
         return jsonify({
-            "error":
-                "Failed to create laboratory",
-
-            "message":
-                str(e)
+            "error": str(e)
         }), 500
 
-    return jsonify({
-
-        "message":
-            "Laboratory created successfully",
-
-        "laboratory": {
-
-            "id":
-                laboratory.id,
-
-            "name":
-                laboratory.name,
-
-            "accreditation_number":
-                laboratory.accreditation_number,
-
-            "accreditation_status":
-                laboratory.accreditation_status,
-
-            "is_recognized":
-                laboratory.is_recognized,
-
-            "user_id":
-                laboratory.user_id
-        }
-
-    }), 201
-
 
 # ============================================================
-# GET CERTIFICATES
+# CERTIFICATES
 # ============================================================
 
-@app.route(
-    "/api/certificates",
-    methods=["GET"]
-)
+@app.get("/api/certificates")
 def get_certificates():
 
-    certificates = (
-        Certificate.query
-        .order_by(
-            Certificate.id.desc()
+    try:
+
+        certificates = (
+            Certificate.query
+            .order_by(Certificate.id.desc())
+            .all()
         )
-        .all()
-    )
 
-    return jsonify([
+        result = []
 
-        {
+        for certificate in certificates:
 
-            "id":
-                certificate.id,
+            equipment = Equipment.query.get(
+                certificate.equipment_id
+            )
 
-            "equipment_id":
-                certificate.equipment_id,
+            result.append({
+                "id": certificate.id,
+                "certificate_number":
+                    certificate.certificate_number,
+                "equipment_id":
+                    certificate.equipment_id,
+                "equipment_code":
+                    equipment.code
+                    if equipment else None,
+                "equipment_name":
+                    equipment.name
+                    if equipment else None,
+                "laboratory_id":
+                    certificate.laboratory_id,
+                "version_number":
+                    certificate.version_number,
+                "file_name":
+                    certificate.file_name,
+                "sha256_hash":
+                    certificate.sha256_hash,
+                "calibration_date":
+                    certificate.calibration_date,
+                "next_calibration_date":
+                    certificate.next_calibration_date,
+                "calibration_result":
+                    certificate.calibration_result,
+                "uploaded_by":
+                    certificate.uploaded_by,
+                "approved_by":
+                    certificate.approved_by,
+                "status":
+                    certificate.status,
+                "blockchain_tx":
+                    certificate.blockchain_tx,
+                "blockchain_timestamp":
+                    certificate.blockchain_timestamp,
+                "registered_at":
+                    (
+                        certificate.registered_at.isoformat()
+                        if certificate.registered_at
+                        else None
+                    )
+            })
 
-            "laboratory_id":
-                certificate.laboratory_id,
+        return jsonify(result)
 
+    except Exception as e:
+
+        return jsonify({
+            "error": str(e)
+        }), 500
+
+
+# ============================================================
+# SINGLE CERTIFICATE
+# ============================================================
+
+@app.get("/api/certificates/<int:certificate_id>")
+def get_certificate(certificate_id):
+
+    try:
+
+        certificate = Certificate.query.get(
+            certificate_id
+        )
+
+        if not certificate:
+            return jsonify({
+                "error": "Certificate not found"
+            }), 404
+
+        equipment = Equipment.query.get(
+            certificate.equipment_id
+        )
+
+        return jsonify({
+            "id": certificate.id,
             "certificate_number":
                 certificate.certificate_number,
-
+            "equipment_id":
+                certificate.equipment_id,
+            "equipment_code":
+                equipment.code
+                if equipment else None,
+            "equipment_name":
+                equipment.name
+                if equipment else None,
+            "laboratory_id":
+                certificate.laboratory_id,
             "version_number":
                 certificate.version_number,
-
             "file_name":
                 certificate.file_name,
-
-            "file_path":
-                certificate.file_path,
-
             "sha256_hash":
                 certificate.sha256_hash,
-
             "calibration_date":
-                (
-                    certificate.calibration_date.isoformat()
-                    if certificate.calibration_date
-                    else None
-                ),
-
+                certificate.calibration_date,
             "next_calibration_date":
-                (
-                    certificate.next_calibration_date.isoformat()
-                    if certificate.next_calibration_date
-                    else None
-                ),
-
+                certificate.next_calibration_date,
             "calibration_result":
                 certificate.calibration_result,
-
             "status":
                 certificate.status,
-
             "blockchain_tx":
                 certificate.blockchain_tx,
-
-            "blockchain_timestamp":
+            "registered_at":
                 (
-                    certificate.blockchain_timestamp.isoformat()
-                    if certificate.blockchain_timestamp
+                    certificate.registered_at.isoformat()
+                    if certificate.registered_at
                     else None
                 )
+        })
 
-        }
-
-        for certificate in certificates
-
-    ])
-
-
-# ============================================================
-# GET ONE CERTIFICATE
-# ============================================================
-
-@app.route(
-    "/api/certificates/<int:certificate_id>",
-    methods=["GET"]
-)
-def get_one_certificate(certificate_id):
-
-    certificate = db.session.get(
-        Certificate,
-        certificate_id
-    )
-
-    if not certificate:
+    except Exception as e:
 
         return jsonify({
-            "error": "Certificate not found"
-        }), 404
-
-    return jsonify({
-
-        "id":
-            certificate.id,
-
-        "equipment_id":
-            certificate.equipment_id,
-
-        "laboratory_id":
-            certificate.laboratory_id,
-
-        "certificate_number":
-            certificate.certificate_number,
-
-        "version_number":
-            certificate.version_number,
-
-        "file_name":
-            certificate.file_name,
-
-        "file_path":
-            certificate.file_path,
-
-        "sha256_hash":
-            certificate.sha256_hash,
-
-        "calibration_date":
-            (
-                certificate.calibration_date.isoformat()
-                if certificate.calibration_date
-                else None
-            ),
-
-        "next_calibration_date":
-            (
-                certificate.next_calibration_date.isoformat()
-                if certificate.next_calibration_date
-                else None
-            ),
-
-        "calibration_result":
-            certificate.calibration_result,
-
-        "status":
-            certificate.status,
-
-        "blockchain_tx":
-            certificate.blockchain_tx,
-
-        "blockchain_timestamp":
-            (
-                certificate.blockchain_timestamp.isoformat()
-                if certificate.blockchain_timestamp
-                else None
-            )
-
-    })
+            "error": str(e)
+        }), 500
 
 
 # ============================================================
-# APPROVE CERTIFICATE
+# CERTIFICATE APPROVAL
 # ============================================================
 
-@app.route(
-    "/api/certificates/<int:certificate_id>/approve",
-    methods=["POST"]
-)
+@app.post("/api/certificates/<int:certificate_id>/approve")
 def approve_certificate(certificate_id):
 
-    certificate = db.session.get(
-        Certificate,
-        certificate_id
-    )
-
-    if not certificate:
-
-        return jsonify({
-            "error": "Certificate not found"
-        }), 404
-
-    data = request.get_json() or {}
-
-    certificate.status = "APPROVED"
-
-    certificate.approved_by = (
-        data.get(
-            "approved_by"
-        )
-    )
-
     try:
 
+        certificate = Certificate.query.get(
+            certificate_id
+        )
+
+        if not certificate:
+            return jsonify({
+                "error": "Certificate not found"
+            }), 404
+
+        certificate.status = "APPROVED"
+
         db.session.commit()
+
+        return jsonify({
+            "message":
+                "Certificate approved successfully",
+            "certificate_id":
+                certificate.id,
+            "status":
+                certificate.status
+        })
 
     except Exception as e:
 
         db.session.rollback()
 
         return jsonify({
-
-            "error":
-                "Failed to approve certificate",
-
-            "message":
-                str(e)
-
+            "error": str(e)
         }), 500
 
-    return jsonify({
-
-        "message":
-            "Certificate approved successfully",
-
-        "certificate": {
-
-            "id":
-                certificate.id,
-
-            "status":
-                certificate.status,
-
-            "approved_by":
-                certificate.approved_by,
-
-            "sha256_hash":
-                certificate.sha256_hash
-        }
-
-    })
-
 
 # ============================================================
-# VERIFY CERTIFICATE BY CERTIFICATE ID
+# CERTIFICATE VERIFICATION
 # ============================================================
 
-@app.route(
-    "/api/certificates/<int:certificate_id>/verify",
-    methods=["POST"]
-)
+@app.post("/api/certificates/<int:certificate_id>/verify")
 def verify_certificate(certificate_id):
 
-    certificate = db.session.get(
-        Certificate,
-        certificate_id
-    )
-
-    if not certificate:
-
-        return jsonify({
-            "error": "Certificate not found"
-        }), 404
-
-    data = request.get_json()
-
-    if not data or not data.get(
-        "sha256_hash"
-    ):
-
-        return jsonify({
-            "error": "sha256_hash is required"
-        }), 400
-
-    uploaded_hash = (
-        data["sha256_hash"]
-        .lower()
-    )
-
-    registered_hash = (
-        certificate.sha256_hash
-        .lower()
-    )
-
-    hash_match = (
-        uploaded_hash ==
-        registered_hash
-    )
-
-    verification_event = VerificationEvent(
-
-        certificate_id=(
-            certificate.id
-        ),
-
-        equipment_id=(
-            certificate.equipment_id
-        ),
-
-        uploaded_hash=(
-            uploaded_hash
-        ),
-
-        registered_hash=(
-            registered_hash
-        ),
-
-        hash_match=(
-            hash_match
-        ),
-
-        blockchain_ref=(
-            certificate.blockchain_tx
-        )
-    )
-
-    db.session.add(
-        verification_event
-    )
-
     try:
 
-        db.session.commit()
+        certificate = Certificate.query.get(
+            certificate_id
+        )
+
+        if not certificate:
+            return jsonify({
+                "error": "Certificate not found"
+            }), 404
+
+        if "file" not in request.files:
+            return jsonify({
+                "error": "Certificate file is required"
+            }), 400
+
+        uploaded_file = request.files["file"]
+
+        if not uploaded_file.filename:
+            return jsonify({
+                "error": "Invalid file"
+            }), 400
+
+        file_bytes = uploaded_file.read()
+
+        current_hash = hashlib.sha256(
+            file_bytes
+        ).hexdigest()
+
+        hash_match = (
+            current_hash ==
+            certificate.sha256_hash
+        )
+
+        return jsonify({
+            "certificate_id":
+                certificate.id,
+            "registered_hash":
+                certificate.sha256_hash,
+            "current_hash":
+                current_hash,
+            "hash_match":
+                hash_match,
+            "status":
+                "VERIFIED"
+                if hash_match
+                else "NOT VERIFIED"
+        })
 
     except Exception as e:
 
-        db.session.rollback()
-
         return jsonify({
-
-            "error":
-                "Verification could not be saved",
-
-            "message":
-                str(e)
-
+            "error": str(e)
         }), 500
 
-    return jsonify({
-
-        "verified":
-            hash_match,
-
-        "certificate_id":
-            certificate.id,
-
-        "registered_hash":
-            registered_hash,
-
-        "uploaded_hash":
-            uploaded_hash,
-
-        "status":
-            certificate.status,
-
-        "blockchain_reference":
-            certificate.blockchain_tx,
-
-        "result":
-            (
-                "VERIFIED"
-                if hash_match
-                else
-                "TAMPER DETECTED"
-            )
-
-    })
-
 
 # ============================================================
-# VERIFY UPLOADED CERTIFICATE BY EQUIPMENT ID
+# VERIFY CERTIFICATE BY EQUIPMENT
 # ============================================================
 
-@app.route(
-    "/api/verify/<int:equipment_id>",
-    methods=["POST"]
-)
+@app.post("/api/verify/<int:equipment_id>")
 def verify_equipment_certificate(
     equipment_id
 ):
 
-    # --------------------------------------------------------
-    # FIND EQUIPMENT
-    # --------------------------------------------------------
-
-    equipment = db.session.get(
-        Equipment,
-        equipment_id
-    )
-
-    if not equipment:
-
-        return jsonify({
-            "error": "Equipment not found"
-        }), 404
-
-    # --------------------------------------------------------
-    # GET UPLOADED FILE
-    # --------------------------------------------------------
-
-    certificate_file = request.files.get(
-        "certificate"
-    )
-
-    if not certificate_file:
-
-        return jsonify({
-            "error": "Please upload a certificate."
-        }), 400
-
-    if not certificate_file.filename:
-
-        return jsonify({
-            "error": "Invalid certificate file."
-        }), 400
-
-    # --------------------------------------------------------
-    # PDF CHECK
-    # --------------------------------------------------------
-
-    if not certificate_file.filename.lower().endswith(
-        ".pdf"
-    ):
-
-        return jsonify({
-            "error":
-                "Only PDF certificates are allowed."
-        }), 400
-
-    # --------------------------------------------------------
-    # FIND REGISTERED CERTIFICATE
-    # --------------------------------------------------------
-
-    certificate = (
-        Certificate.query
-        .filter_by(
-            equipment_id=equipment.id
-        )
-        .order_by(
-            Certificate.version_number.desc()
-        )
-        .first()
-    )
-
-    if not certificate:
-
-        return jsonify({
-            "error":
-                "No registered certificate found for this equipment."
-        }), 404
-
-    # --------------------------------------------------------
-    # CALCULATE UPLOADED SHA-256
-    # --------------------------------------------------------
-
-    uploaded_hash = calculate_uploaded_sha256(
-        certificate_file
-    )
-
-    uploaded_hash = uploaded_hash.lower()
-
-    registered_hash = (
-        certificate.sha256_hash.lower()
-    )
-
-    # --------------------------------------------------------
-    # COMPARE HASHES
-    # --------------------------------------------------------
-
-    hash_match = (
-        uploaded_hash ==
-        registered_hash
-    )
-
-    # --------------------------------------------------------
-    # SAVE VERIFICATION EVENT
-    # --------------------------------------------------------
-
-    verification_event = VerificationEvent(
-
-        certificate_id=(
-            certificate.id
-        ),
-
-        equipment_id=(
-            equipment.id
-        ),
-
-        uploaded_hash=(
-            uploaded_hash
-        ),
-
-        registered_hash=(
-            registered_hash
-        ),
-
-        hash_match=(
-            hash_match
-        ),
-
-        serial_match=None,
-
-        blockchain_ref=(
-            certificate.blockchain_tx
-        )
-    )
-
-    db.session.add(
-        verification_event
-    )
-
     try:
 
-        db.session.commit()
+        equipment = Equipment.query.get(
+            equipment_id
+        )
+
+        if not equipment:
+            return jsonify({
+                "error": "Equipment not found"
+            }), 404
+
+        if "file" not in request.files:
+            return jsonify({
+                "error": "Certificate file is required"
+            }), 400
+
+        uploaded_file = request.files["file"]
+
+        file_bytes = uploaded_file.read()
+
+        current_hash = hashlib.sha256(
+            file_bytes
+        ).hexdigest()
+
+        certificate = (
+            Certificate.query
+            .filter_by(
+                equipment_id=equipment_id
+            )
+            .order_by(
+                Certificate.version_number.desc()
+            )
+            .first()
+        )
+
+        if not certificate:
+            return jsonify({
+                "error":
+                    "No certificate registered for this equipment"
+            }), 404
+
+        hash_match = (
+            current_hash ==
+            certificate.sha256_hash
+        )
+
+        return jsonify({
+            "equipment_id":
+                equipment.id,
+            "equipment_code":
+                equipment.code,
+            "equipment_name":
+                equipment.name,
+            "serial_number":
+                equipment.serial_number,
+            "certificate_id":
+                certificate.id,
+            "certificate_number":
+                certificate.certificate_number,
+            "registered_hash":
+                certificate.sha256_hash,
+            "current_hash":
+                current_hash,
+            "hash_match":
+                hash_match,
+            "status":
+                "VERIFIED"
+                if hash_match
+                else "NOT VERIFIED"
+        })
 
     except Exception as e:
 
-        db.session.rollback()
-
         return jsonify({
-
-            "error":
-                "Verification could not be saved.",
-
-            "message":
-                str(e)
-
+            "error": str(e)
         }), 500
-
-    # --------------------------------------------------------
-    # RESULT MESSAGE
-    # --------------------------------------------------------
-
-    if hash_match:
-
-        message = (
-            "Certificate verified successfully. "
-            "The uploaded certificate matches "
-            "the registered fingerprint."
-        )
-
-        result = "VERIFIED"
-
-    else:
-
-        message = (
-            "Certificate verification failed. "
-            "The uploaded certificate does not "
-            "match the registered fingerprint."
-        )
-
-        result = "TAMPER DETECTED"
-
-    # --------------------------------------------------------
-    # RESPONSE
-    # --------------------------------------------------------
-
-    return jsonify({
-
-        "verified":
-            hash_match,
-
-        "message":
-            message,
-
-        "equipment_id":
-            equipment.id,
-
-        "equipment_name":
-            equipment.name,
-
-        "certificate_id":
-            certificate.id,
-
-        "certificate_reference":
-            certificate.certificate_number,
-
-        "stored_hash":
-            registered_hash,
-
-        "uploaded_hash":
-            uploaded_hash,
-
-        "hash_match":
-            hash_match,
-
-        "certificate_status":
-            certificate.status,
-
-        "certificate_version":
-            certificate.version_number,
-
-        "blockchain_reference":
-            certificate.blockchain_tx,
-
-        "result":
-            result
-
-    }), 200
 
 
 # ============================================================
 # HOSPITAL DASHBOARD
 # ============================================================
 
-@app.route(
-    "/api/hospital/dashboard",
-    methods=["GET"]
-)
+@app.get("/api/hospital/dashboard")
 def hospital_dashboard():
 
-    equipments = (
-        Equipment.query
-        .all()
-    )
+    try:
 
-    today = date.today()
+        equipment_count = Equipment.query.count()
+        certificate_count = Certificate.query.count()
 
-    due_soon_count = 0
+        verified_count = Certificate.query.filter(
+            Certificate.status == "APPROVED"
+        ).count()
 
-    overdue_count = 0
+        pending_count = Certificate.query.filter(
+            Certificate.status.in_([
+                "PENDING",
+                "PENDING_APPROVAL"
+            ])
+        ).count()
 
-    for equipment in equipments:
+        return jsonify({
+            "equipment": equipment_count,
+            "certificates": certificate_count,
+            "verified": verified_count,
+            "pending": pending_count
+        })
 
-        if not equipment.next_calibration_date:
-            continue
+    except Exception as e:
 
-        days_left = (
-            equipment.next_calibration_date
-            - today
-        ).days
+        return jsonify({
+            "error": str(e)
+        }), 500
 
-        if days_left < 0:
 
-            overdue_count += 1
+# ============================================================
+# LAB DASHBOARD
+# ============================================================
 
-        elif days_left <= 30:
+@app.get("/api/lab/dashboard")
+def lab_dashboard():
 
-            due_soon_count += 1
+    try:
 
-    verified_certificates = (
-        Certificate.query
-        .filter_by(
-            status="APPROVED"
+        equipment_count = Equipment.query.count()
+        certificate_count = Certificate.query.count()
+
+        pending_count = Certificate.query.filter(
+            Certificate.status.in_([
+                "PENDING",
+                "PENDING_APPROVAL"
+            ])
+        ).count()
+
+        verified_count = Certificate.query.filter(
+            Certificate.status == "APPROVED"
+        ).count()
+
+        issue_count = Issue.query.count()
+
+        recent_certificates = (
+            Certificate.query
+            .order_by(
+                Certificate.id.desc()
+            )
+            .limit(5)
+            .all()
         )
-        .count()
-    )
 
-    laboratories = (
-        Laboratory.query
-        .count()
-    )
+        recent = []
 
-    recent_records = (
-        Equipment.query
-        .order_by(
-            Equipment.id.desc()
+        for certificate in recent_certificates:
+
+            equipment = Equipment.query.get(
+                certificate.equipment_id
+            )
+
+            recent.append({
+                "id":
+                    certificate.id,
+                "certificate_number":
+                    certificate.certificate_number,
+                "equipment":
+                    equipment.name
+                    if equipment
+                    else None,
+                "status":
+                    certificate.status,
+                "sha256":
+                    certificate.sha256_hash,
+                "blockchain_tx":
+                    certificate.blockchain_tx
+            })
+
+        return jsonify({
+            "equipment":
+                equipment_count,
+            "certificates":
+                certificate_count,
+            "pending":
+                pending_count,
+            "verified":
+                verified_count,
+            "issues":
+                issue_count,
+            "recent_certificates":
+                recent
+        })
+
+    except Exception as e:
+
+        return jsonify({
+            "error": str(e)
+        }), 500
+
+
+# ============================================================
+# LAB EQUIPMENT
+# ============================================================
+
+@app.get("/api/lab/equipments")
+def lab_equipments():
+
+    try:
+
+        equipments = (
+            Equipment.query
+            .order_by(
+                Equipment.id.desc()
+            )
+            .all()
         )
-        .limit(5)
-        .all()
-    )
 
-    return jsonify({
+        result = []
 
-        "equipment":
-            len(equipments),
+        for equipment in equipments:
 
-        "active_equipment":
-            len([
-                equipment
-                for equipment in equipments
-                if equipment.inspection_state
-                == "IDLE"
-            ]),
+            result.append({
+                "id":
+                    equipment.id,
+                "code":
+                    equipment.code,
+                "name":
+                    equipment.name,
+                "manufacturer":
+                    equipment.manufacturer,
+                "model":
+                    equipment.model,
+                "serial_number":
+                    equipment.serial_number,
+                "hospital":
+                    equipment.hospital,
+                "department":
+                    equipment.department,
+                "laboratory_id":
+                    equipment.laboratory_id,
+                "calibration_date":
+                    equipment.calibration_date,
+                "next_calibration_date":
+                    equipment.next_calibration_date,
+                "inspection_state":
+                    equipment.inspection_state,
+                "created_at":
+                    (
+                        equipment.created_at.isoformat()
+                        if equipment.created_at
+                        else None
+                    )
+            })
 
-        "verified_certificates":
-            verified_certificates,
+        return jsonify(result)
 
-        "due_soon":
-            due_soon_count,
+    except Exception as e:
 
-        "overdue":
-            overdue_count,
+        return jsonify({
+            "error": str(e)
+        }), 500
 
-        "laboratories":
-            laboratories,
 
-        "recent_records": [
+# ============================================================
+# AUDITOR DASHBOARD
+# ============================================================
 
-            {
+@app.get("/api/auditor/dashboard")
+def auditor_dashboard():
+
+    try:
+
+        total_equipment = (
+            Equipment.query.count()
+        )
+
+        total_certificates = (
+            Certificate.query.count()
+        )
+
+        verified_certificates = (
+            Certificate.query
+            .filter(
+                Certificate.status == "APPROVED"
+            )
+            .count()
+        )
+
+        pending_certificates = (
+            Certificate.query
+            .filter(
+                Certificate.status.in_([
+                    "PENDING",
+                    "PENDING_APPROVAL"
+                ])
+            )
+            .count()
+        )
+
+        rejected_certificates = (
+            Certificate.query
+            .filter(
+                Certificate.status == "REJECTED"
+            )
+            .count()
+        )
+
+        total_issues = (
+            Issue.query.count()
+        )
+
+        blockchain_registered = (
+            Certificate.query
+            .filter(
+                Certificate.blockchain_tx.isnot(None)
+            )
+            .count()
+        )
+
+        recent_events = (
+            VerificationEvent.query
+            .order_by(
+                VerificationEvent.verified_at.desc()
+            )
+            .limit(8)
+            .all()
+        )
+
+        recent_verifications = []
+
+        for event in recent_events:
+
+            certificate = Certificate.query.get(
+                event.certificate_id
+            )
+
+            equipment = Equipment.query.get(
+                event.equipment_id
+            )
+
+            recent_verifications.append({
+
+                "id":
+                    event.id,
+
+                "certificate_id":
+                    event.certificate_id,
+
+                "certificate_number":
+                    (
+                        certificate.certificate_number
+                        if certificate
+                        else None
+                    ),
+
+                "equipment_id":
+                    (
+                        equipment.code
+                        if equipment
+                        else None
+                    ),
+
+                "equipment_name":
+                    (
+                        equipment.name
+                        if equipment
+                        else None
+                    ),
+
+                "hash_match":
+                    event.hash_match,
+
+                "serial_match":
+                    event.serial_match,
+
+                "blockchain_ref":
+                    event.blockchain_ref,
+
+                "verified_at":
+                    (
+                        event.verified_at.isoformat()
+                        if event.verified_at
+                        else None
+                    )
+            })
+
+        return jsonify({
+
+            "total_equipment":
+                total_equipment,
+
+            "total_certificates":
+                total_certificates,
+
+            "verified_certificates":
+                verified_certificates,
+
+            "pending_certificates":
+                pending_certificates,
+
+            "rejected_certificates":
+                rejected_certificates,
+
+            "total_issues":
+                total_issues,
+
+            "blockchain_registered":
+                blockchain_registered,
+
+            "recent_verifications":
+                recent_verifications
+        })
+
+    except Exception as e:
+
+        return jsonify({
+            "error": str(e)
+        }), 500
+
+
+# ============================================================
+# AUDITOR EQUIPMENT
+# ============================================================
+
+@app.get("/api/auditor/equipment")
+def auditor_equipment():
+
+    try:
+
+        equipments = (
+            Equipment.query
+            .order_by(
+                Equipment.id.desc()
+            )
+            .all()
+        )
+
+        result = []
+
+        for equipment in equipments:
+
+            result.append({
 
                 "id":
                     equipment.id,
@@ -1829,7 +1138,7 @@ def hospital_dashboard():
                 "code":
                     equipment.code,
 
-                "equipment_name":
+                "name":
                     equipment.name,
 
                 "manufacturer":
@@ -1845,26 +1154,230 @@ def hospital_dashboard():
                     equipment.hospital,
 
                 "department":
-                    equipment.department,
+                    equipment.department
+            })
 
-                "next_calibration_date":
-                    (
-                        equipment.next_calibration_date.isoformat()
-                        if equipment.next_calibration_date
-                        else None
-                    )
+        return jsonify(result)
 
-            }
+    except Exception as e:
 
-            for equipment in recent_records
-
-        ]
-
-    })
+        return jsonify({
+            "error": str(e)
+        }), 500
 
 
 # ============================================================
-# START SERVER
+# AUDITOR REPORT ISSUE
+# ============================================================
+
+@app.post("/api/auditor/issues")
+def report_auditor_issue():
+
+    try:
+
+        data = request.get_json() or {}
+
+        equipment_id = data.get(
+            "equipment_id"
+        )
+
+        description = data.get(
+            "description",
+            ""
+        ).strip()
+
+        if not equipment_id:
+
+            return jsonify({
+                "error":
+                    "Equipment ID is required"
+            }), 400
+
+        if not description:
+
+            return jsonify({
+                "error":
+                    "Issue description is required"
+            }), 400
+
+        equipment = Equipment.query.get(
+            equipment_id
+        )
+
+        if not equipment:
+
+            return jsonify({
+                "error":
+                    "Equipment not found"
+            }), 404
+
+        issue_id = (
+            "ISS-" +
+            uuid.uuid4().hex[:10].upper()
+        )
+
+        evidence_text = (
+            f"{issue_id}|"
+            f"{equipment.id}|"
+            f"{equipment.code}|"
+            f"{description}"
+        )
+
+        evidence_hash = hashlib.sha256(
+            evidence_text.encode("utf-8")
+        ).hexdigest()
+
+        issue = Issue(
+            issue_id=issue_id,
+            equipment_id=equipment.id,
+            evidence_hash=evidence_hash
+        )
+
+        db.session.add(issue)
+
+        status_event = IssueStatusEvent(
+            issue_id=issue_id,
+            status="OPEN"
+        )
+
+        db.session.add(status_event)
+
+        db.session.commit()
+
+        return jsonify({
+
+            "message":
+                "Issue reported successfully",
+
+            "issue": {
+
+                "issue_id":
+                    issue.issue_id,
+
+                "equipment_id":
+                    equipment.id,
+
+                "equipment_code":
+                    equipment.code,
+
+                "equipment_name":
+                    equipment.name,
+
+                "description":
+                    description,
+
+                "evidence_hash":
+                    evidence_hash,
+
+                "status":
+                    "OPEN",
+
+                "created_at":
+                    (
+                        issue.created_at.isoformat()
+                        if issue.created_at
+                        else None
+                    )
+            }
+
+        }), 201
+
+    except Exception as e:
+
+        db.session.rollback()
+
+        return jsonify({
+            "error": str(e)
+        }), 500
+
+
+# ============================================================
+# ISSUES
+# ============================================================
+
+@app.get("/api/issues")
+def get_issues():
+
+    try:
+
+        issues = (
+            Issue.query
+            .order_by(
+                Issue.created_at.desc()
+            )
+            .all()
+        )
+
+        result = []
+
+        for issue in issues:
+
+            equipment = Equipment.query.get(
+                issue.equipment_id
+            )
+
+            latest_status = (
+                IssueStatusEvent.query
+                .filter_by(
+                    issue_id=issue.issue_id
+                )
+                .order_by(
+                    IssueStatusEvent.id.desc()
+                )
+                .first()
+            )
+
+            result.append({
+
+                "issue_id":
+                    issue.issue_id,
+
+                "equipment_id":
+                    issue.equipment_id,
+
+                "equipment_code":
+                    (
+                        equipment.code
+                        if equipment
+                        else None
+                    ),
+
+                "equipment_name":
+                    (
+                        equipment.name
+                        if equipment
+                        else None
+                    ),
+
+                "evidence_hash":
+                    issue.evidence_hash,
+
+                "status":
+                    (
+                        latest_status.status
+                        if latest_status
+                        else "OPEN"
+                    ),
+
+                "created_at":
+                    (
+                        issue.created_at.isoformat()
+                        if issue.created_at
+                        else None
+                    )
+            })
+
+        return jsonify(result)
+
+    except Exception as e:
+
+        return jsonify({
+            "error": str(e)
+        }), 500
+
+
+# ============================================================
+# RUN SERVER
 # ============================================================
 
 if __name__ == "__main__":

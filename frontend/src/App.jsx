@@ -3,127 +3,155 @@ import { useState } from "react";
 
 import Login from "./pages/Login";
 
+/* Hospital */
 import HospitalDashboard from "./pages/HospitalDashboard";
-import LabDashboard from "./pages/LabDashboard";
-import AuditorDashboard from "./pages/AuditorDashboard";
-
 import RegisterEquipment from "./pages/RegisterEquipment";
 import Equipments from "./pages/Equipments";
 import EquipmentDetails from "./pages/EquipmentDetails";
 import Maintenance from "./pages/Maintenance";
-import Inspection from "./pages/Inspection";
-import VerifyDocuments from "./pages/VerifyDocuments";
-import AuditTrail from "./pages/AuditTrail";
+
+/* Lab */
+import LabDashboard from "./pages/LabDashboard";
+import LabEquipments from "./pages/LabEquipments";
+import LabCertificates from "./pages/LabCertificates";
+import LabVerificationStatus from "./pages/LabVerificationStatus";
+import LabIssues from "./pages/LabIssues";
+
+/* Auditor */
+import AuditorDashboard from "./pages/AuditorDashboard";
+import AuditorVerify from "./pages/AuditorVerify";
+import AuditorEquipment from "./pages/AuditorEquipment";
+import AuditorIssues from "./pages/AuditorIssues";
+import AuditorAudit from "./pages/AuditorAudit";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
+  const [portal, setPortal] = useState("");
+
+  const handleLogin = (selectedPortal) => {
+    setLoggedIn(true);
+    setPortal(selectedPortal);
+  };
+
+  const getPortalPath = () => {
+    if (portal === "hospital") return "/hospital";
+    if (portal === "lab") return "/lab";
+    if (portal === "auditor") return "/auditor";
+    return "/";
+  };
+
+  const protect = (allowedPortal, element) => {
+    if (!loggedIn) {
+      return <Navigate to="/" replace />;
+    }
+
+    if (portal !== allowedPortal) {
+      return <Navigate to={getPortalPath()} replace />;
+    }
+
+    return element;
+  };
 
   return (
     <BrowserRouter>
       <Routes>
-        {/* ================================================== */}
         {/* LOGIN */}
-        {/* ================================================== */}
-
         <Route
           path="/"
           element={
             loggedIn ? (
-              <Navigate to="/hospital" replace />
+              <Navigate to={getPortalPath()} replace />
             ) : (
-              <Login onLogin={() => setLoggedIn(true)} />
+              <Login onLogin={handleLogin} />
             )
           }
         />
 
-        {/* ================================================== */}
-        {/* HOSPITAL PORTAL */}
-        {/* ================================================== */}
+        {/* ================= HOSPITAL ================= */}
 
         <Route
           path="/hospital"
-          element={
-            loggedIn ? <HospitalDashboard /> : <Navigate to="/" replace />
-          }
+          element={protect("hospital", <HospitalDashboard />)}
         />
 
         <Route
           path="/hospital/equipment"
-          element={loggedIn ? <Equipments /> : <Navigate to="/" replace />}
+          element={protect("hospital", <Equipments />)}
         />
 
         <Route
           path="/hospital/equipment/:id"
-          element={
-            loggedIn ? <EquipmentDetails /> : <Navigate to="/" replace />
-          }
+          element={protect("hospital", <EquipmentDetails />)}
         />
 
         <Route
           path="/hospital/maintenance"
-          element={loggedIn ? <Maintenance /> : <Navigate to="/" replace />}
+          element={protect("hospital", <Maintenance />)}
         />
 
-        {/* ================================================== */}
-        {/* LAB-TECH PORTAL */}
-        {/* ================================================== */}
+        {/* ================= LAB ================= */}
 
-        <Route
-          path="/lab"
-          element={loggedIn ? <LabDashboard /> : <Navigate to="/" replace />}
-        />
+        <Route path="/lab" element={protect("lab", <LabDashboard />)} />
 
         <Route
           path="/lab/register"
-          element={
-            loggedIn ? <RegisterEquipment /> : <Navigate to="/" replace />
-          }
+          element={protect("lab", <RegisterEquipment />)}
+        />
+
+        <Route
+          path="/lab/equipments"
+          element={protect("lab", <LabEquipments />)}
+        />
+
+        <Route
+          path="/lab/equipments/:id"
+          element={protect("lab", <EquipmentDetails />)}
         />
 
         <Route
           path="/lab/certificates"
-          element={loggedIn ? <VerifyDocuments /> : <Navigate to="/" replace />}
+          element={protect("lab", <LabCertificates />)}
         />
 
-        {/* ================================================== */}
-        {/* AUDITOR PORTAL */}
-        {/* ================================================== */}
+        <Route
+          path="/lab/verification"
+          element={protect("lab", <LabVerificationStatus />)}
+        />
+
+        <Route path="/lab/issues" element={protect("lab", <LabIssues />)} />
+
+        {/* ================= AUDITOR ================= */}
 
         <Route
           path="/auditor"
-          element={
-            loggedIn ? <AuditorDashboard /> : <Navigate to="/" replace />
-          }
+          element={protect("auditor", <AuditorDashboard />)}
         />
 
         <Route
           path="/auditor/verify"
-          element={loggedIn ? <VerifyDocuments /> : <Navigate to="/" replace />}
+          element={protect("auditor", <AuditorVerify />)}
         />
 
         <Route
-          path="/auditor/inspection"
-          element={loggedIn ? <Inspection /> : <Navigate to="/" replace />}
+          path="/auditor/equipment"
+          element={protect("auditor", <AuditorEquipment />)}
+        />
+
+        <Route
+          path="/auditor/issues"
+          element={protect("auditor", <AuditorIssues />)}
         />
 
         <Route
           path="/auditor/audit"
-          element={loggedIn ? <AuditTrail /> : <Navigate to="/" replace />}
+          element={protect("auditor", <AuditorAudit />)}
         />
 
-        {/* ================================================== */}
-        {/* QR VERIFICATION - PUBLIC */}
-        {/* ================================================== */}
-
-        <Route path="/scan/:id" element={<VerifyDocuments />} />
-
-        {/* ================================================== */}
-        {/* OLD ROUTES - TEMPORARY COMPATIBILITY */}
-        {/* ================================================== */}
+        {/* ================= OLD URL COMPATIBILITY ================= */}
 
         <Route
           path="/dashboard"
-          element={<Navigate to="/hospital" replace />}
+          element={<Navigate to={getPortalPath()} replace />}
         />
 
         <Route
@@ -137,20 +165,13 @@ function App() {
         />
 
         <Route
-          path="/equipments/:id"
-          element={
-            loggedIn ? <EquipmentDetails /> : <Navigate to="/" replace />
-          }
-        />
-
-        <Route
           path="/maintenance"
           element={<Navigate to="/hospital/maintenance" replace />}
         />
 
         <Route
           path="/inspection"
-          element={<Navigate to="/auditor/inspection" replace />}
+          element={<Navigate to="/auditor" replace />}
         />
 
         <Route
@@ -163,13 +184,10 @@ function App() {
           element={<Navigate to="/auditor/audit" replace />}
         />
 
-        {/* ================================================== */}
-        {/* UNKNOWN ROUTE */}
-        {/* ================================================== */}
-
+        {/* UNKNOWN URL */}
         <Route
           path="*"
-          element={<Navigate to={loggedIn ? "/hospital" : "/"} replace />}
+          element={<Navigate to={loggedIn ? getPortalPath() : "/"} replace />}
         />
       </Routes>
     </BrowserRouter>
