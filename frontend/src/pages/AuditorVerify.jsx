@@ -20,7 +20,6 @@ function AuditorVerify() {
     const loadEquipment = async () => {
       try {
         const response = await axios.get(`${API}/api/equipments`);
-
         setEquipment(response.data || []);
       } catch (error) {
         console.error("Equipment loading error:", error);
@@ -38,7 +37,6 @@ function AuditorVerify() {
         type: "error",
         message: "Please select equipment.",
       });
-
       return;
     }
 
@@ -47,7 +45,6 @@ function AuditorVerify() {
         type: "error",
         message: "Please upload a certificate PDF.",
       });
-
       return;
     }
 
@@ -57,7 +54,8 @@ function AuditorVerify() {
     try {
       const formData = new FormData();
 
-      formData.append("certificate", file);
+      // Backend expects the uploaded certificate as "file"
+      formData.append("file", file);
 
       const response = await axios.post(
         `${API}/api/verify/${selectedId}`,
@@ -110,7 +108,6 @@ function AuditorVerify() {
 
           <div>
             <strong>MEDLEDGER</strong>
-
             <span>Auditor Portal</span>
           </div>
         </div>
@@ -221,25 +218,21 @@ function AuditorVerify() {
 
             <div className="verify-step">
               <strong>01</strong>
-
               <span>Select registered equipment</span>
             </div>
 
             <div className="verify-step">
               <strong>02</strong>
-
               <span>Upload the certificate PDF</span>
             </div>
 
             <div className="verify-step">
               <strong>03</strong>
-
               <span>Calculate SHA-256 fingerprint</span>
             </div>
 
             <div className="verify-step">
               <strong>04</strong>
-
               <span>Compare the registered proof</span>
             </div>
           </div>

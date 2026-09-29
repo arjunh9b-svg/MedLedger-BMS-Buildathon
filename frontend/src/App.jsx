@@ -37,6 +37,7 @@ function App() {
     if (portal === "hospital") return "/hospital";
     if (portal === "lab") return "/lab";
     if (portal === "auditor") return "/auditor";
+
     return "/";
   };
 
@@ -52,10 +53,24 @@ function App() {
     return element;
   };
 
+  /* Register Equipment is shared by Hospital and Lab */
+  const protectRegistration = () => {
+    if (!loggedIn) {
+      return <Navigate to="/" replace />;
+    }
+
+    if (portal !== "hospital" && portal !== "lab") {
+      return <Navigate to={getPortalPath()} replace />;
+    }
+
+    return <RegisterEquipment />;
+  };
+
   return (
     <BrowserRouter>
       <Routes>
-        {/* LOGIN */}
+        {/* ================= LOGIN ================= */}
+
         <Route
           path="/"
           element={
@@ -89,14 +104,13 @@ function App() {
           element={protect("hospital", <Maintenance />)}
         />
 
+        {/* ================= SHARED REGISTER ================= */}
+
+        <Route path="/lab/register" element={protectRegistration()} />
+
         {/* ================= LAB ================= */}
 
         <Route path="/lab" element={protect("lab", <LabDashboard />)} />
-
-        <Route
-          path="/lab/register"
-          element={protect("lab", <RegisterEquipment />)}
-        />
 
         <Route
           path="/lab/equipments"
@@ -147,7 +161,7 @@ function App() {
           element={protect("auditor", <AuditorAudit />)}
         />
 
-        {/* ================= OLD URL COMPATIBILITY ================= */}
+        {/* ================= OLD ROUTES ================= */}
 
         <Route
           path="/dashboard"
@@ -184,7 +198,8 @@ function App() {
           element={<Navigate to="/auditor/audit" replace />}
         />
 
-        {/* UNKNOWN URL */}
+        {/* ================= FALLBACK ================= */}
+
         <Route
           path="*"
           element={<Navigate to={loggedIn ? getPortalPath() : "/"} replace />}

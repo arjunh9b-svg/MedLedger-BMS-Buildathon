@@ -248,7 +248,7 @@ function HospitalDashboard() {
             <Link to="/hospital/equipment">View all →</Link>
           </div>
 
-          {dashboard.recent_records.length === 0 ? (
+          {(dashboard.recent_records || []).length === 0 ? (
             <div className="empty-records">
               No equipment records have been registered yet.
             </div>
@@ -261,7 +261,7 @@ function HospitalDashboard() {
                 <span>Status</span>
               </div>
 
-              {dashboard.recent_records.map((record) => (
+              {(dashboard.recent_records || []).map((record) => (
                 <Link
                   key={record.id}
                   to={`/hospital/equipment/${record.id}`}
@@ -320,7 +320,7 @@ function DashboardHeader() {
 
         <Link to="/hospital/maintenance">Maintenance</Link>
 
-        <Link to="/auditor/inspection">Inspection</Link>
+        <Link to="/auditor">Inspection</Link>
 
         <Link to="/auditor/verify">Verify Documents</Link>
       </nav>
