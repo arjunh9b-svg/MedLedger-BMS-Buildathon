@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-from flask_sqlalchemy import SQLAlchemy
+
 from werkzeug.utils import secure_filename
 
 import os
@@ -8,6 +8,8 @@ import hashlib
 import uuid
 import json
 import urllib.request
+import qrcode
+
 from datetime import datetime
 
 from models import (
@@ -40,12 +42,16 @@ DATABASE_URL = os.getenv(
 app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
+
 UPLOAD_FOLDER = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
     "uploads"
 )
 
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(
+    UPLOAD_FOLDER,
+    exist_ok=True
+)
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
@@ -59,6 +65,7 @@ db.init_app(app)
 
 @app.get("/")
 def home():
+
     return jsonify({
         "message": "MedLedger Backend Running",
         "mst_connected": True
@@ -67,8 +74,12 @@ def home():
 
 @app.get("/api/health")
 def health():
+
     try:
-        db.session.execute(db.text("SELECT 1"))
+
+        db.session.execute(
+            db.text("SELECT 1")
+        )
 
         return jsonify({
             "status": "ok",
@@ -76,6 +87,7 @@ def health():
         })
 
     except Exception as e:
+
         return jsonify({
             "status": "error",
             "database": "disconnected",
@@ -89,6 +101,7 @@ def health():
 
 @app.get("/uploads/<path:filename>")
 def uploaded_file(filename):
+
     return send_from_directory(
         app.config["UPLOAD_FOLDER"],
         filename
@@ -103,6 +116,7 @@ def uploaded_file(filename):
 def create_equipment():
 
     saved_file_path = None
+    qr_path = None
 
     try:
 
@@ -143,30 +157,37 @@ def create_equipment():
         # ----------------------------------------------------
 
         if not name:
+
             return jsonify({
                 "error": "Equipment name is required"
             }), 400
 
         if not serial_number:
+
             return jsonify({
                 "error": "Serial number is required"
             }), 400
 
         if "calibration" not in request.files:
+
             return jsonify({
                 "error":
                     "Calibration certificate PDF is required"
             }), 400
 
-        calibration_file = request.files["calibration"]
+        calibration_file = request.files[
+            "calibration"
+        ]
 
         if not calibration_file:
+
             return jsonify({
                 "error":
                     "Calibration certificate PDF is required"
             }), 400
 
         if not calibration_file.filename:
+
             return jsonify({
                 "error":
                     "Calibration certificate PDF is required"
@@ -181,6 +202,7 @@ def create_equipment():
         ).first()
 
         if existing:
+
             return jsonify({
                 "error":
                     "Equipment with this serial number already exists"
@@ -207,6 +229,7 @@ def create_equipment():
             ).first()
 
         if not laboratory:
+
             return jsonify({
                 "error":
                     "Laboratory not found"
@@ -239,6 +262,7 @@ def create_equipment():
         file_bytes = calibration_file.read()
 
         if not file_bytes:
+
             return jsonify({
                 "error":
                     "Calibration certificate file is empty"
@@ -274,10 +298,37 @@ def create_equipment():
             created_at=datetime.utcnow()
         )
 
-        db.session.add(equipment)
+        db.session.add(
+            equipment
+        )
 
-        # Get equipment.id without committing.
         db.session.flush()
+
+        # ----------------------------------------------------
+        # GENERATE EQUIPMENT QR CODE
+        # ----------------------------------------------------
+
+        qr_filename = (
+            f"{equipment.code}_qr.png"
+        )
+
+        qr_path = os.path.join(
+            app.config["UPLOAD_FOLDER"],
+            qr_filename
+        )
+
+        verification_url = (
+            f"http://127.0.0.1:5173/"
+            f"verify/{equipment.id}"
+        )
+
+        qr = qrcode.make(
+            verification_url
+        )
+
+        qr.save(
+            qr_path
+        )
 
         # ----------------------------------------------------
         # SAVE CERTIFICATE FILE
@@ -302,7 +353,9 @@ def create_equipment():
             "wb"
         ) as file:
 
-            file.write(file_bytes)
+            file.write(
+                file_bytes
+            )
 
         # ----------------------------------------------------
         # CREATE CERTIFICATE DATABASE RECORD
@@ -324,7 +377,9 @@ def create_equipment():
             blockchain_tx=None
         )
 
-        db.session.add(certificate)
+        db.session.add(
+            certificate
+        )
 
         # ----------------------------------------------------
         # MST BLOCKCHAIN REGISTRATION
@@ -423,7 +478,10 @@ def create_equipment():
                     equipment.hospital,
 
                 "department":
-                    equipment.department
+                    equipment.department,
+
+                "qr_code":
+                    qr_filename
             },
 
             "certificate": {
@@ -450,8 +508,6 @@ def create_equipment():
 
         db.session.rollback()
 
-        # Delete uploaded file if
-        # registration failed.
         if (
             saved_file_path
             and os.path.exists(
@@ -460,11 +516,113 @@ def create_equipment():
         ):
 
             try:
+
                 os.remove(
                     saved_file_path
                 )
+
             except Exception:
                 pass
+
+        if (
+            qr_path
+            and os.path.exists(
+                qr_path
+            )
+        ):
+
+            try:
+
+                os.remove(
+                    qr_path
+                )
+
+            except Exception:
+                pass
+
+        return jsonify({
+            "error": str(e)
+        }), 500
+
+
+# ============================================================
+# GENERATE MISSING QR CODES
+# ============================================================
+
+@app.get("/api/equipments/generate-missing-qr")
+def generate_missing_qr():
+
+    try:
+
+        equipments = (
+            Equipment.query
+            .order_by(
+                Equipment.id.asc()
+            )
+            .all()
+        )
+
+        generated = []
+        existing = []
+
+        for equipment in equipments:
+
+            qr_filename = (
+                f"{equipment.code}_qr.png"
+            )
+
+            qr_path = os.path.join(
+                app.config["UPLOAD_FOLDER"],
+                qr_filename
+            )
+
+            if os.path.exists(
+                qr_path
+            ):
+
+                existing.append(
+                    equipment.code
+                )
+
+                continue
+
+            verification_url = (
+                f"http://127.0.0.1:5173/"
+                f"verify/{equipment.id}"
+            )
+
+            qr = qrcode.make(
+                verification_url
+            )
+
+            qr.save(
+                qr_path
+            )
+
+            generated.append(
+                equipment.code
+            )
+
+        return jsonify({
+
+            "message":
+                "Missing QR codes generated successfully",
+
+            "generated":
+                generated,
+
+            "already_existing":
+                existing,
+
+            "total_equipment":
+                len(equipments),
+
+            "total_generated":
+                len(generated)
+
+        }), 200
+
+    except Exception as e:
 
         return jsonify({
             "error": str(e)
@@ -491,6 +649,15 @@ def get_equipments():
         result = []
 
         for equipment in equipments:
+
+            qr_filename = (
+                f"{equipment.code}_qr.png"
+            )
+
+            qr_path = os.path.join(
+                app.config["UPLOAD_FOLDER"],
+                qr_filename
+            )
 
             result.append({
 
@@ -551,10 +718,19 @@ def get_equipments():
                 "created_at":
                     equipment.created_at.isoformat()
                     if equipment.created_at
+                    else None,
+
+                "qr_code":
+                    qr_filename
+                    if os.path.exists(
+                        qr_path
+                    )
                     else None
             })
 
-        return jsonify(result)
+        return jsonify(
+            result
+        )
 
     except Exception as e:
 
@@ -577,10 +753,20 @@ def get_equipment(equipment_id):
         )
 
         if not equipment:
+
             return jsonify({
                 "error":
                     "Equipment not found"
             }), 404
+
+        qr_filename = (
+            f"{equipment.code}_qr.png"
+        )
+
+        qr_path = os.path.join(
+            app.config["UPLOAD_FOLDER"],
+            qr_filename
+        )
 
         return jsonify({
 
@@ -641,6 +827,13 @@ def get_equipment(equipment_id):
             "created_at":
                 equipment.created_at.isoformat()
                 if equipment.created_at
+                else None,
+
+            "qr_code":
+                qr_filename
+                if os.path.exists(
+                    qr_path
+                )
                 else None
         })
 
@@ -657,6 +850,7 @@ def get_equipment(equipment_id):
 
 @app.get("/api/equipment")
 def legacy_equipment():
+
     return get_equipments()
 
 
@@ -702,7 +896,9 @@ def get_laboratories():
                     lab.user_id
             })
 
-        return jsonify(result)
+        return jsonify(
+            result
+        )
 
     except Exception as e:
 
@@ -718,13 +914,16 @@ def create_laboratory():
 
         data = request.get_json() or {}
 
-        name = data.get("name")
+        name = data.get(
+            "name"
+        )
 
         accreditation_number = data.get(
             "accreditation_number"
         )
 
         if not name:
+
             return jsonify({
                 "error":
                     "Laboratory name is required"
@@ -754,11 +953,12 @@ def create_laboratory():
                     "user_id"
                 ),
 
-            created_at=
-                datetime.utcnow()
+            created_at=datetime.utcnow()
         )
 
-        db.session.add(laboratory)
+        db.session.add(
+            laboratory
+        )
 
         db.session.commit()
 
@@ -784,6 +984,166 @@ def create_laboratory():
     except Exception as e:
 
         db.session.rollback()
+
+        return jsonify({
+            "error": str(e)
+        }), 500
+
+
+# ============================================================
+# LABTRUST
+# ============================================================
+
+@app.get("/api/laboratories/trust")
+def laboratory_trust():
+
+    try:
+
+        laboratories = (
+            Laboratory.query
+            .order_by(
+                Laboratory.id.asc()
+            )
+            .all()
+        )
+
+        results = []
+
+        for lab in laboratories:
+
+            # ------------------------------------------------
+            # CERTIFICATES FOR THIS LAB
+            # ------------------------------------------------
+
+            certificates = (
+                Certificate.query
+                .filter_by(
+                    laboratory_id=lab.id
+                )
+                .all()
+            )
+
+            total_certificates = len(
+                certificates
+            )
+
+            # ------------------------------------------------
+            # APPROVED CERTIFICATES
+            # ------------------------------------------------
+
+            approved_certificates = sum(
+                1
+                for certificate in certificates
+                if certificate.status == "APPROVED"
+            )
+
+            # ------------------------------------------------
+            # BLOCKCHAIN REGISTERED CERTIFICATES
+            # ------------------------------------------------
+
+            blockchain_certificates = sum(
+                1
+                for certificate in certificates
+                if certificate.blockchain_tx
+            )
+
+            # ------------------------------------------------
+            # TRUST SCORE
+            # ------------------------------------------------
+
+            score = 0
+
+            # Recognized laboratory
+            if lab.is_recognized:
+                score += 30
+
+            # Active accreditation
+            if lab.accreditation_status == "ACTIVE":
+                score += 20
+
+            # Certificate history
+            if total_certificates > 0:
+                score += 20
+
+            # Approval history
+            if total_certificates > 0:
+
+                approval_rate = (
+                    approved_certificates
+                    / total_certificates
+                )
+
+                score += round(
+                    approval_rate * 15
+                )
+
+            # Blockchain history
+            if total_certificates > 0:
+
+                blockchain_rate = (
+                    blockchain_certificates
+                    / total_certificates
+                )
+
+                score += round(
+                    blockchain_rate * 15
+                )
+
+            # ------------------------------------------------
+            # TRUST LEVEL
+            # ------------------------------------------------
+
+            if score >= 80:
+
+                trust_level = "HIGH"
+
+            elif score >= 50:
+
+                trust_level = "MEDIUM"
+
+            else:
+
+                trust_level = "LOW"
+
+            results.append({
+
+                "id":
+                    lab.id,
+
+                "name":
+                    lab.name,
+
+                "accreditation_number":
+                    lab.accreditation_number,
+
+                "accreditation_status":
+                    lab.accreditation_status,
+
+                "is_recognized":
+                    lab.is_recognized,
+
+                "total_certificates":
+                    total_certificates,
+
+                "approved_certificates":
+                    approved_certificates,
+
+                "blockchain_certificates":
+                    blockchain_certificates,
+
+                "trust_score":
+                    score,
+
+                "trust_level":
+                    trust_level
+
+            })
+
+        return jsonify(
+            results
+        ), 200
+
+    except Exception as e:
 
         return jsonify({
             "error": str(e)
@@ -878,7 +1238,9 @@ def get_certificates():
                     else None
             })
 
-        return jsonify(result)
+        return jsonify(
+            result
+        )
 
     except Exception as e:
 
@@ -901,6 +1263,7 @@ def get_certificate(certificate_id):
         )
 
         if not certificate:
+
             return jsonify({
                 "error":
                     "Certificate not found"
@@ -952,6 +1315,12 @@ def get_certificate(certificate_id):
             "calibration_result":
                 certificate.calibration_result,
 
+            "uploaded_by":
+                certificate.uploaded_by,
+
+            "approved_by":
+                certificate.approved_by,
+
             "status":
                 certificate.status,
 
@@ -985,6 +1354,7 @@ def approve_certificate(certificate_id):
         )
 
         if not certificate:
+
             return jsonify({
                 "error":
                     "Certificate not found"
@@ -1029,20 +1399,25 @@ def verify_certificate(certificate_id):
         )
 
         if not certificate:
+
             return jsonify({
                 "error":
                     "Certificate not found"
             }), 404
 
         if "file" not in request.files:
+
             return jsonify({
                 "error":
                     "Certificate file is required"
             }), 400
 
-        uploaded_file = request.files["file"]
+        uploaded_file = request.files[
+            "file"
+        ]
 
         if not uploaded_file.filename:
+
             return jsonify({
                 "error":
                     "Invalid file"
@@ -1055,7 +1430,8 @@ def verify_certificate(certificate_id):
         ).hexdigest()
 
         hash_match = (
-            current_hash ==
+            current_hash
+            ==
             certificate.sha256_hash
         )
 
@@ -1102,18 +1478,22 @@ def verify_equipment_certificate(
         )
 
         if not equipment:
+
             return jsonify({
                 "error":
                     "Equipment not found"
             }), 404
 
         if "file" not in request.files:
+
             return jsonify({
                 "error":
                     "Certificate file is required"
             }), 400
 
-        uploaded_file = request.files["file"]
+        uploaded_file = request.files[
+            "file"
+        ]
 
         file_bytes = uploaded_file.read()
 
@@ -1133,13 +1513,15 @@ def verify_equipment_certificate(
         )
 
         if not certificate:
+
             return jsonify({
                 "error":
                     "No certificate registered for this equipment"
             }), 404
 
         hash_match = (
-            current_hash ==
+            current_hash
+            ==
             certificate.sha256_hash
         )
 
@@ -1205,7 +1587,8 @@ def hospital_dashboard():
         verified_count = (
             Certificate.query
             .filter(
-                Certificate.status ==
+                Certificate.status
+                ==
                 "APPROVED"
             )
             .count()
@@ -1275,7 +1658,8 @@ def lab_dashboard():
         verified_count = (
             Certificate.query
             .filter(
-                Certificate.status ==
+                Certificate.status
+                ==
                 "APPROVED"
             )
             .count()
@@ -1418,7 +1802,9 @@ def lab_equipments():
                     else None
             })
 
-        return jsonify(result)
+        return jsonify(
+            result
+        )
 
     except Exception as e:
 
@@ -1447,7 +1833,8 @@ def auditor_dashboard():
         verified_certificates = (
             Certificate.query
             .filter(
-                Certificate.status ==
+                Certificate.status
+                ==
                 "APPROVED"
             )
             .count()
@@ -1467,7 +1854,8 @@ def auditor_dashboard():
         rejected_certificates = (
             Certificate.query
             .filter(
-                Certificate.status ==
+                Certificate.status
+                ==
                 "REJECTED"
             )
             .count()
@@ -1626,7 +2014,9 @@ def auditor_equipment():
                     equipment.department
             })
 
-        return jsonify(result)
+        return jsonify(
+            result
+        )
 
     except Exception as e:
 
@@ -1694,7 +2084,9 @@ def report_auditor_issue():
         )
 
         evidence_hash = hashlib.sha256(
-            evidence_text.encode("utf-8")
+            evidence_text.encode(
+                "utf-8"
+            )
         ).hexdigest()
 
         issue = Issue(
@@ -1703,14 +2095,18 @@ def report_auditor_issue():
             evidence_hash=evidence_hash
         )
 
-        db.session.add(issue)
+        db.session.add(
+            issue
+        )
 
         status_event = IssueStatusEvent(
             issue_id=issue_id,
             status="OPEN"
         )
 
-        db.session.add(status_event)
+        db.session.add(
+            status_event
+        )
 
         db.session.commit()
 
@@ -1827,7 +2223,9 @@ def get_issues():
                     else None
             })
 
-        return jsonify(result)
+        return jsonify(
+            result
+        )
 
     except Exception as e:
 
