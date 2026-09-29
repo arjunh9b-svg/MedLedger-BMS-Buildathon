@@ -6,44 +6,23 @@ class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    name = db.Column(
-        db.String(255),
-        nullable=False
-    )
+    name = db.Column(db.String(255), nullable=False)
 
-    email = db.Column(
-        db.String(255),
-        unique=True,
-        nullable=False
-    )
+    email = db.Column(db.String(255), unique=True, nullable=False)
 
-    role = db.Column(
-        db.String(30),
-        nullable=False
-    )
-    # authority | admin | auditor | lab
+    role = db.Column(db.String(30), nullable=False)
 
-    organisation = db.Column(
-        db.String(255),
-        nullable=True
-    )
+    organisation = db.Column(db.String(255), nullable=True)
 
-    employee_id = db.Column(
-        db.String(100),
-        nullable=True
-    )
+    employee_id = db.Column(db.String(100), nullable=True)
 
-    wallet_address = db.Column(
-        db.String(100),
-        nullable=True
-    )
+    wallet_address = db.Column(db.String(100), nullable=True)
 
     status = db.Column(
         db.String(20),
         nullable=False,
         default="active"
     )
-    # active | suspended
 
     created_at = db.Column(
         db.DateTime,
@@ -54,15 +33,9 @@ class User(db.Model):
 class Laboratory(db.Model):
     __tablename__ = "laboratories"
 
-    id = db.Column(
-        db.Integer,
-        primary_key=True
-    )
+    id = db.Column(db.Integer, primary_key=True)
 
-    name = db.Column(
-        db.String(255),
-        nullable=False
-    )
+    name = db.Column(db.String(255), nullable=False)
 
     accreditation_number = db.Column(
         db.String(100),
@@ -186,7 +159,6 @@ class Equipment(db.Model):
         nullable=False,
         default="IDLE"
     )
-    # IDLE | UNDER_INSPECTION
 
     inspection_started_at = db.Column(
         db.DateTime,
@@ -300,7 +272,6 @@ class Certificate(db.Model):
         db.String(50),
         nullable=True
     )
-    # PASSED | FAILED
 
     uploaded_by = db.Column(
         db.Integer,
@@ -319,7 +290,6 @@ class Certificate(db.Model):
         nullable=False,
         default="PENDING_APPROVAL"
     )
-    # PENDING_APPROVAL | APPROVED | REJECTED
 
     blockchain_tx = db.Column(
         db.String(255),
@@ -416,6 +386,11 @@ class Issue(db.Model):
         db.Integer,
         db.ForeignKey("equipment.id"),
         nullable=True
+    )
+
+    description = db.Column(
+        db.Text,
+        nullable=False
     )
 
     evidence_hash = db.Column(
@@ -518,9 +493,4 @@ class AuditTrail(db.Model):
     created_at = db.Column(
         db.DateTime,
         server_default=db.func.now()
-    )
-
-    user = db.relationship(
-        "User",
-        foreign_keys=[user_id]
     )

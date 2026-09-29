@@ -122,10 +122,6 @@ def create_equipment():
 
         data = request.form
 
-        # ----------------------------------------------------
-        # FORM DATA
-        # ----------------------------------------------------
-
         name = (
             data.get("equipment_name")
             or data.get("name")
@@ -151,10 +147,6 @@ def create_equipment():
         certificate_reference = data.get(
             "certificate_reference"
         )
-
-        # ----------------------------------------------------
-        # VALIDATION
-        # ----------------------------------------------------
 
         if not name:
 
@@ -193,10 +185,6 @@ def create_equipment():
                     "Calibration certificate PDF is required"
             }), 400
 
-        # ----------------------------------------------------
-        # DUPLICATE EQUIPMENT CHECK
-        # ----------------------------------------------------
-
         existing = Equipment.query.filter_by(
             serial_number=serial_number
         ).first()
@@ -207,10 +195,6 @@ def create_equipment():
                 "error":
                     "Equipment with this serial number already exists"
             }), 409
-
-        # ----------------------------------------------------
-        # FIND LABORATORY
-        # ----------------------------------------------------
 
         laboratory = None
 
@@ -235,10 +219,6 @@ def create_equipment():
                     "Laboratory not found"
             }), 400
 
-        # ----------------------------------------------------
-        # GENERATE EQUIPMENT CODE
-        # ----------------------------------------------------
-
         last_equipment = (
             Equipment.query
             .order_by(
@@ -255,10 +235,6 @@ def create_equipment():
 
         code = f"EQ-{next_number:05d}"
 
-        # ----------------------------------------------------
-        # READ CERTIFICATE FILE
-        # ----------------------------------------------------
-
         file_bytes = calibration_file.read()
 
         if not file_bytes:
@@ -268,10 +244,6 @@ def create_equipment():
                     "Calibration certificate file is empty"
             }), 400
 
-        # ----------------------------------------------------
-        # SHA-256 HASH
-        # ----------------------------------------------------
-
         certificate_hash = hashlib.sha256(
             file_bytes
         ).hexdigest()
@@ -279,10 +251,6 @@ def create_equipment():
         blockchain_hash = (
             "0x" + certificate_hash
         )
-
-        # ----------------------------------------------------
-        # CREATE EQUIPMENT
-        # ----------------------------------------------------
 
         equipment = Equipment(
             code=code,
@@ -303,10 +271,6 @@ def create_equipment():
         )
 
         db.session.flush()
-
-        # ----------------------------------------------------
-        # GENERATE EQUIPMENT QR CODE
-        # ----------------------------------------------------
 
         qr_filename = (
             f"{equipment.code}_qr.png"
@@ -329,10 +293,6 @@ def create_equipment():
         qr.save(
             qr_path
         )
-
-        # ----------------------------------------------------
-        # SAVE CERTIFICATE FILE
-        # ----------------------------------------------------
 
         original_filename = secure_filename(
             calibration_file.filename
@@ -357,10 +317,6 @@ def create_equipment():
                 file_bytes
             )
 
-        # ----------------------------------------------------
-        # CREATE CERTIFICATE DATABASE RECORD
-        # ----------------------------------------------------
-
         certificate = Certificate(
             certificate_number=certificate_reference,
             equipment_id=equipment.id,
@@ -380,10 +336,6 @@ def create_equipment():
         db.session.add(
             certificate
         )
-
-        # ----------------------------------------------------
-        # MST BLOCKCHAIN REGISTRATION
-        # ----------------------------------------------------
 
         blockchain_payload = json.dumps({
             "command": "register",
@@ -435,17 +387,9 @@ def create_equipment():
                 "MST blockchain did not return a transaction hash"
             )
 
-        # ----------------------------------------------------
-        # SAVE BLOCKCHAIN TRANSACTION
-        # ----------------------------------------------------
-
         certificate.blockchain_tx = (
             transaction_hash
         )
-
-        # ----------------------------------------------------
-        # FINAL DATABASE COMMIT
-        # ----------------------------------------------------
 
         db.session.commit()
 
@@ -516,11 +460,9 @@ def create_equipment():
         ):
 
             try:
-
                 os.remove(
                     saved_file_path
                 )
-
             except Exception:
                 pass
 
@@ -532,11 +474,9 @@ def create_equipment():
         ):
 
             try:
-
                 os.remove(
                     qr_path
                 )
-
             except Exception:
                 pass
 
@@ -1011,10 +951,6 @@ def laboratory_trust():
 
         for lab in laboratories:
 
-            # ------------------------------------------------
-            # CERTIFICATES FOR THIS LAB
-            # ------------------------------------------------
-
             certificates = (
                 Certificate.query
                 .filter_by(
@@ -1027,19 +963,11 @@ def laboratory_trust():
                 certificates
             )
 
-            # ------------------------------------------------
-            # APPROVED CERTIFICATES
-            # ------------------------------------------------
-
             approved_certificates = sum(
                 1
                 for certificate in certificates
                 if certificate.status == "APPROVED"
             )
-
-            # ------------------------------------------------
-            # BLOCKCHAIN REGISTERED CERTIFICATES
-            # ------------------------------------------------
 
             blockchain_certificates = sum(
                 1
@@ -1047,51 +975,40 @@ def laboratory_trust():
                 if certificate.blockchain_tx
             )
 
-            # ------------------------------------------------
-            # TRUST SCORE
-            # ------------------------------------------------
-
             score = 0
 
-            # Recognized laboratory
             if lab.is_recognized:
                 score += 30
 
-            # Active accreditation
             if lab.accreditation_status == "ACTIVE":
                 score += 20
 
-            # Certificate history
             if total_certificates > 0:
                 score += 20
 
-            # Approval history
             if total_certificates > 0:
 
                 approval_rate = (
                     approved_certificates
-                    / total_certificates
+                    /
+                    total_certificates
                 )
 
                 score += round(
                     approval_rate * 15
                 )
 
-            # Blockchain history
             if total_certificates > 0:
 
                 blockchain_rate = (
                     blockchain_certificates
-                    / total_certificates
+                    /
+                    total_certificates
                 )
 
                 score += round(
                     blockchain_rate * 15
                 )
-
-            # ------------------------------------------------
-            # TRUST LEVEL
-            # ------------------------------------------------
 
             if score >= 80:
 
@@ -2026,11 +1943,11 @@ def auditor_equipment():
 
 
 # ============================================================
-# AUDITOR REPORT ISSUE
+# HOSPITAL ISSUE REPORT
 # ============================================================
 
-@app.post("/api/auditor/issues")
-def report_auditor_issue():
+@app.post("/api/issues")
+def create_issue():
 
     try:
 
@@ -2040,9 +1957,12 @@ def report_auditor_issue():
             "equipment_id"
         )
 
-        description = data.get(
-            "description",
-            ""
+        description = (
+            data.get(
+                "description",
+                ""
+            )
+            or ""
         ).strip()
 
         if not equipment_id:
@@ -2056,7 +1976,20 @@ def report_auditor_issue():
 
             return jsonify({
                 "error":
-                    "Issue description is required"
+                    "Issue summary is required"
+            }), 400
+
+        try:
+
+            equipment_id = int(
+                equipment_id
+            )
+
+        except (TypeError, ValueError):
+
+            return jsonify({
+                "error":
+                    "Equipment ID must be a valid number"
             }), 400
 
         equipment = Equipment.query.get(
@@ -2092,6 +2025,7 @@ def report_auditor_issue():
         issue = Issue(
             issue_id=issue_id,
             equipment_id=equipment.id,
+            description=description,
             evidence_hash=evidence_hash
         )
 
@@ -2130,10 +2064,10 @@ def report_auditor_issue():
                     equipment.name,
 
                 "description":
-                    description,
+                    issue.description,
 
                 "evidence_hash":
-                    evidence_hash,
+                    issue.evidence_hash,
 
                 "status":
                     "OPEN",
@@ -2156,7 +2090,7 @@ def report_auditor_issue():
 
 
 # ============================================================
-# ISSUES
+# GET ALL ISSUES
 # ============================================================
 
 @app.get("/api/issues")
@@ -2186,7 +2120,7 @@ def get_issues():
                     issue_id=issue.issue_id
                 )
                 .order_by(
-                    IssueStatusEvent.id.desc()
+                    IssueStatusEvent.event_id.desc()
                 )
                 .first()
             )
@@ -2209,6 +2143,9 @@ def get_issues():
                     if equipment
                     else None,
 
+                "description":
+                    issue.description,
+
                 "evidence_hash":
                     issue.evidence_hash,
 
@@ -2228,6 +2165,117 @@ def get_issues():
         )
 
     except Exception as e:
+
+        return jsonify({
+            "error": str(e)
+        }), 500
+
+
+# ============================================================
+# UPDATE ISSUE STATUS
+# ============================================================
+
+@app.patch("/api/issues/<string:issue_id>/status")
+def update_issue_status(issue_id):
+
+    try:
+
+        data = request.get_json() or {}
+
+        status = (
+            data.get(
+                "status",
+                ""
+            )
+            or ""
+        ).strip().upper()
+
+        allowed_statuses = {
+            "OPEN",
+            "INVESTIGATING",
+            "RESOLVED"
+        }
+
+        if status not in allowed_statuses:
+
+            return jsonify({
+                "error":
+                    "Invalid status"
+            }), 400
+
+        issue = Issue.query.get(
+            issue_id
+        )
+
+        if not issue:
+
+            return jsonify({
+                "error":
+                    "Issue not found"
+            }), 404
+
+        latest_status = (
+            IssueStatusEvent.query
+            .filter_by(
+                issue_id=issue.issue_id
+            )
+            .order_by(
+                IssueStatusEvent.event_id.desc()
+            )
+            .first()
+        )
+
+        if (
+            latest_status
+            and
+            latest_status.status == status
+        ):
+
+            return jsonify({
+
+                "message":
+                    "Issue already has this status",
+
+                "issue_id":
+                    issue.issue_id,
+
+                "status":
+                    status
+            }), 200
+
+        status_event = IssueStatusEvent(
+            issue_id=issue.issue_id,
+            status=status,
+            resolution_reference=(
+                data.get(
+                    "resolution_reference"
+                )
+                if status == "RESOLVED"
+                else None
+            )
+        )
+
+        db.session.add(
+            status_event
+        )
+
+        db.session.commit()
+
+        return jsonify({
+
+            "message":
+                "Issue status updated successfully",
+
+            "issue_id":
+                issue.issue_id,
+
+            "status":
+                status
+        }), 200
+
+    except Exception as e:
+
+        db.session.rollback()
 
         return jsonify({
             "error": str(e)

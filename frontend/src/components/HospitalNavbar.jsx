@@ -1,34 +1,50 @@
 import { Link, useLocation } from "react-router-dom";
 import "./HospitalNavbar.css";
 
+
 function HospitalNavbar() {
+
   const location = useLocation();
+
 
   const logout = () => {
     window.location.href = "/";
   };
 
+
   const isActive = (path) => {
+
     if (path === "/hospital") {
+
       return location.pathname === "/hospital";
+
     }
 
     return location.pathname.startsWith(path);
+
   };
 
+
   return (
+
     <header className="hospital-navbar">
 
-      {/* Brand */}
-      <Link to="/hospital" className="hospital-navbar-brand">
+      <Link
+        to="/hospital"
+        className="hospital-navbar-brand"
+      >
+
         <div className="hospital-navbar-logo">
           M
         </div>
 
-        <span>MEDLEDGER</span>
+        <span>
+          MEDLEDGER
+        </span>
+
       </Link>
 
-      {/* Navigation */}
+
       <nav className="hospital-navbar-links">
 
         <Link
@@ -42,6 +58,7 @@ function HospitalNavbar() {
           Dashboard
         </Link>
 
+
         <Link
           to="/lab/register"
           className={
@@ -52,6 +69,7 @@ function HospitalNavbar() {
         >
           Register Equipment
         </Link>
+
 
         <Link
           to="/hospital/equipment"
@@ -64,6 +82,7 @@ function HospitalNavbar() {
           Equipments
         </Link>
 
+
         <Link
           to="/hospital/lab-selection"
           className={
@@ -74,6 +93,19 @@ function HospitalNavbar() {
         >
           Lab Selection
         </Link>
+
+
+        <Link
+          to="/hospital/issues"
+          className={
+            isActive("/hospital/issues")
+              ? "hospital-nav-link active"
+              : "hospital-nav-link"
+          }
+        >
+          Issues
+        </Link>
+
 
         <Link
           to="/hospital/maintenance"
@@ -88,7 +120,7 @@ function HospitalNavbar() {
 
       </nav>
 
-      {/* User */}
+
       <div className="hospital-navbar-user">
 
         <div className="hospital-navbar-avatar">
@@ -110,7 +142,10 @@ function HospitalNavbar() {
       </div>
 
     </header>
+
   );
+
 }
+
 
 export default HospitalNavbar;

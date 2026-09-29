@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import HospitalNavbar from "../components/HospitalNavbar";
 import "../styles/HospitalDashboard.css";
 
 const API = "http://127.0.0.1:5000";
@@ -26,59 +27,20 @@ function HospitalDashboard() {
       });
   }, []);
 
+  /* =========================================
+     ERROR STATE
+  ========================================= */
+
   if (error) {
     return (
       <div className="hospital-dashboard-page">
+
         <HospitalNavbar />
 
         <main className="hospital-dashboard-main">
+
           <section className="hospital-dashboard-heading">
-            <p className="hospital-eyebrow">HOSPITAL OVERVIEW</p>
-            <h1>Dashboard</h1>
-            <p>Medical equipment and certificate overview.</p>
-          </section>
 
-          <div className="hospital-error">
-            {error}
-          </div>
-        </main>
-      </div>
-    );
-  }
-
-  if (!dashboard) {
-    return (
-      <div className="hospital-dashboard-page">
-        <HospitalNavbar />
-
-        <main className="hospital-dashboard-main">
-          <section className="hospital-dashboard-heading">
-            <p className="hospital-eyebrow">
-              HOSPITAL OVERVIEW
-            </p>
-
-            <h1>Dashboard</h1>
-
-            <p>
-              Loading hospital records...
-            </p>
-          </section>
-        </main>
-      </div>
-    );
-  }
-
-  return (
-    <div className="hospital-dashboard-page">
-
-      <HospitalNavbar />
-
-      <main className="hospital-dashboard-main">
-
-        {/* HEADER */}
-        <section className="hospital-dashboard-heading">
-
-          <div>
             <p className="hospital-eyebrow">
               HOSPITAL OVERVIEW
             </p>
@@ -90,20 +52,109 @@ function HospitalDashboard() {
             <p>
               Medical equipment and certificate overview.
             </p>
+
+          </section>
+
+          <div className="hospital-error">
+            {error}
           </div>
+
+        </main>
+
+      </div>
+    );
+  }
+
+
+  /* =========================================
+     LOADING STATE
+  ========================================= */
+
+  if (!dashboard) {
+    return (
+      <div className="hospital-dashboard-page">
+
+        <HospitalNavbar />
+
+        <main className="hospital-dashboard-main">
+
+          <section className="hospital-dashboard-heading">
+
+            <p className="hospital-eyebrow">
+              HOSPITAL OVERVIEW
+            </p>
+
+            <h1>
+              Dashboard
+            </h1>
+
+            <p>
+              Loading hospital records...
+            </p>
+
+          </section>
+
+        </main>
+
+      </div>
+    );
+  }
+
+
+  /* =========================================
+     MAIN DASHBOARD
+  ========================================= */
+
+  return (
+    <div className="hospital-dashboard-page">
+
+      <HospitalNavbar />
+
+      <main className="hospital-dashboard-main">
+
+        {/* =====================================
+            HEADER
+        ===================================== */}
+
+        <section className="hospital-dashboard-heading">
+
+          <div>
+
+            <p className="hospital-eyebrow">
+              HOSPITAL OVERVIEW
+            </p>
+
+            <h1>
+              Dashboard
+            </h1>
+
+            <p>
+              Medical equipment and certificate overview.
+            </p>
+
+          </div>
+
 
           <Link
             to="/lab/register"
             className="hospital-register-button"
           >
-            <span>+</span>
+
+            <span>
+              +
+            </span>
+
             Register Equipment
+
           </Link>
 
         </section>
 
 
-        {/* STATS */}
+        {/* =====================================
+            STATS
+        ===================================== */}
+
         <section className="hospital-stats-grid">
 
           <StatCard
@@ -113,6 +164,7 @@ function HospitalDashboard() {
             description="Registered equipment"
           />
 
+
           <StatCard
             icon="✓"
             title="Verified Certificates"
@@ -121,6 +173,7 @@ function HospitalDashboard() {
             type="verified"
           />
 
+
           <StatCard
             icon="◷"
             title="Due Soon"
@@ -128,6 +181,7 @@ function HospitalDashboard() {
             description="Within 30 days"
             type="due"
           />
+
 
           <StatCard
             icon="!"
@@ -140,17 +194,28 @@ function HospitalDashboard() {
         </section>
 
 
-        {/* LOWER SECTION */}
+        {/* =====================================
+            LOWER SECTION
+        ===================================== */}
+
         <section className="hospital-dashboard-grid">
 
           {/* BLOCKCHAIN */}
+
           <div className="hospital-card blockchain-card">
 
             <div className="hospital-card-heading">
 
               <div>
-                <p>TRUST LAYER</p>
-                <h2>MST Blockchain</h2>
+
+                <p>
+                  TRUST LAYER
+                </p>
+
+                <h2>
+                  MST Blockchain
+                </h2>
+
               </div>
 
               <span className="blockchain-symbol">
@@ -165,6 +230,7 @@ function HospitalDashboard() {
               <div className="blockchain-status-dot"></div>
 
               <div>
+
                 <strong>
                   Blockchain Connected
                 </strong>
@@ -173,6 +239,7 @@ function HospitalDashboard() {
                   Certificate fingerprints are registered and
                   verified through MST Blockchain.
                 </span>
+
               </div>
 
             </div>
@@ -181,24 +248,41 @@ function HospitalDashboard() {
             <div className="blockchain-details">
 
               <div>
-                <span>Equipment</span>
+
+                <span>
+                  Equipment
+                </span>
+
                 <strong>
                   {dashboard.equipment}
                 </strong>
+
               </div>
 
+
               <div>
-                <span>Verified</span>
+
+                <span>
+                  Verified
+                </span>
+
                 <strong>
                   {dashboard.verified_certificates}
                 </strong>
+
               </div>
 
+
               <div>
-                <span>Laboratories</span>
+
+                <span>
+                  Laboratories
+                </span>
+
                 <strong>
                   {dashboard.laboratories}
                 </strong>
+
               </div>
 
             </div>
@@ -207,14 +291,23 @@ function HospitalDashboard() {
 
 
           {/* EQUIPMENT OVERVIEW */}
+
           <div className="hospital-card">
 
             <div className="hospital-card-heading">
 
               <div>
-                <p>EQUIPMENT</p>
-                <h2>Overview</h2>
+
+                <p>
+                  EQUIPMENT
+                </p>
+
+                <h2>
+                  Overview
+                </h2>
+
               </div>
+
 
               <Link to="/hospital/equipment">
                 View all →
@@ -232,6 +325,7 @@ function HospitalDashboard() {
                 value={dashboard.equipment}
               />
 
+
               <OverviewRow
                 icon="✓"
                 title="Active equipment"
@@ -239,12 +333,14 @@ function HospitalDashboard() {
                 value={dashboard.active_equipment}
               />
 
+
               <OverviewRow
                 icon="◷"
                 title="Calibration due"
                 description="Within the next 30 days"
                 value={dashboard.due_soon}
               />
+
 
               <OverviewRow
                 icon="!"
@@ -260,15 +356,26 @@ function HospitalDashboard() {
         </section>
 
 
-        {/* RECENT ACTIVITY */}
+        {/* =====================================
+            RECENT ACTIVITY
+        ===================================== */}
+
         <section className="hospital-card hospital-activity-card">
 
           <div className="hospital-card-heading">
 
             <div>
-              <p>RECENT ACTIVITY</p>
-              <h2>Equipment Activity</h2>
+
+              <p>
+                RECENT ACTIVITY
+              </p>
+
+              <h2>
+                Equipment Activity
+              </h2>
+
             </div>
+
 
             <Link to="/hospital/equipment">
               View all →
@@ -288,10 +395,23 @@ function HospitalDashboard() {
             <div className="hospital-activity-list">
 
               <div className="hospital-activity-header">
-                <span>Equipment</span>
-                <span>Activity</span>
-                <span>Date</span>
-                <span>Status</span>
+
+                <span>
+                  Equipment
+                </span>
+
+                <span>
+                  Activity
+                </span>
+
+                <span>
+                  Date
+                </span>
+
+                <span>
+                  Status
+                </span>
+
               </div>
 
 
@@ -304,6 +424,7 @@ function HospitalDashboard() {
                 >
 
                   <div>
+
                     <strong>
                       {record.code}
                     </strong>
@@ -311,10 +432,12 @@ function HospitalDashboard() {
                     <small>
                       {record.equipment_name}
                     </small>
+
                   </div>
 
 
                   <div>
+
                     <strong>
                       Equipment Registered
                     </strong>
@@ -323,6 +446,7 @@ function HospitalDashboard() {
                       {record.manufacturer ||
                         "Medical equipment"}
                     </small>
+
                   </div>
 
 
@@ -354,96 +478,6 @@ function HospitalDashboard() {
 
 
 /* =========================================
-   HOSPITAL NAVBAR
-========================================= */
-
-function HospitalNavbar() {
-
-  const logout = () => {
-    window.location.href = "/";
-  };
-
-  return (
-    <header className="hospital-navbar">
-
-      {/* BRAND */}
-      <Link
-        to="/hospital"
-        className="hospital-brand"
-      >
-
-        <div className="hospital-logo">
-          M
-        </div>
-
-        <span>
-          MEDLEDGER
-        </span>
-
-      </Link>
-
-
-      {/* NAVIGATION */}
-      <nav className="hospital-nav">
-
-        <Link
-          to="/hospital"
-          className="active"
-        >
-          Dashboard
-        </Link>
-
-
-        <Link to="/lab/register">
-          Register Equipment
-        </Link>
-
-
-        <Link to="/hospital/equipment">
-          Equipments
-        </Link>
-
-
-        {/* LAB SELECTION */}
-        <Link to="/hospital/lab-selection">
-          Lab Selection
-        </Link>
-
-
-        <Link to="/hospital/maintenance">
-          Maintenance
-        </Link>
-
-      </nav>
-
-
-      {/* USER */}
-      <div className="hospital-user">
-
-        <div className="hospital-avatar">
-          DR
-        </div>
-
-        <span className="hospital-admin">
-          Admin
-        </span>
-
-        <button
-          type="button"
-          className="hospital-logout"
-          onClick={logout}
-        >
-          Logout
-        </button>
-
-      </div>
-
-    </header>
-  );
-}
-
-
-/* =========================================
    STAT CARD
 ========================================= */
 
@@ -457,9 +491,12 @@ function StatCard({
   return (
     <div className="hospital-stat-card">
 
-      <div className={`hospital-stat-icon ${type}`}>
+      <div
+        className={`hospital-stat-icon ${type}`}
+      >
         {icon}
       </div>
+
 
       <div className="hospital-stat-content">
 
@@ -499,7 +536,9 @@ function OverviewRow({
         {icon}
       </div>
 
+
       <div>
+
         <strong>
           {title}
         </strong>
@@ -507,7 +546,9 @@ function OverviewRow({
         <span>
           {description}
         </span>
+
       </div>
+
 
       <b>
         {value}
@@ -519,4 +560,3 @@ function OverviewRow({
 
 
 export default HospitalDashboard;
-
