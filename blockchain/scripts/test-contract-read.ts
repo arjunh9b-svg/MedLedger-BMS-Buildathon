@@ -25,4 +25,4 @@ console.log("Contract:", contractAddress);
 console.log("Equipment:", equipmentId);
 console.log("Stored hash:", result[0]);
 console.log("Registered at:", result[1]);
-console.log("Exists:", result[2]);npx hardhat run scripts/test-verify.ts --network mstTestnet
+console.log("Exists:", result[2]);
